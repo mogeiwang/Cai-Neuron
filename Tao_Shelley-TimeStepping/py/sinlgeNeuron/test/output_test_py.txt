@@ -1,0 +1,301 @@
+
+In [1]: execfile("test.py")
+canonical
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 0.999999999983 ; VOLTAGE:  0.175578230757
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 16 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.905871657083
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 16 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.982679406941
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.0486889595634
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.108893854749
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.145775348112
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.161937648515
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 0.999999999999 ; VOLTAGE:  0.169672260781
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.172953565767
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.156209665209
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.170908792883
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.174424795225
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.17529183214
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175506118785
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175560285434
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 0.999999999999 ; VOLTAGE:  0.175573767462
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175577118803
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 16 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.90650328551
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 16 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.982822531786
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.0719952515195
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.10890314369
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.145777722981
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.161938246801
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 0.999999999999 ; VOLTAGE:  0.169672410923
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.172953603359
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175573571928
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175577947787
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175578214181
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175578230475
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175578231561
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175578231612
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 0.999999999999 ; VOLTAGE:  0.175578231688
+
+Deconstruction finished.
+
+
+Initialization starts:
+
+Runing
+There are 17 spkikes,
+   at the last click, TIME: 1.0 ; VOLTAGE:  0.175578231674
+
+Deconstruction finished.
+
+
