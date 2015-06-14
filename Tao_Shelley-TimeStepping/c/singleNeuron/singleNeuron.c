@@ -12,7 +12,7 @@
 //· COPYRIGHT 2015
 //·
 //· Description:
-//· gcc -std=gnu99 stack.c -o stack -g -lm -lgsl -lgslcblas
+//· gcc -std=gnu99 singleNeuron.c -o singleNeuron -g -lm -lgsl -lgslcblas
 //·
 //· There may be small errors in DichotomySearch(), chech again!!!
 //·
@@ -49,7 +49,7 @@
 #define DebugW_T_F(s)   {printf("\n[LINE %d] [FILe %s] [W-T-F]: %s\n",__LINE__,__FILE__, s);}
 #define DebugError(s, t)  {printf("\n[LINE %d] [FILe %s] [ERROR]: %s\nreturning...\n",__LINE__,__FILE__, s); return t;}
 #define Debug0_Div(divisor) {if(divisor==0) printf("\n[LINE %d] [FILe %s] [ERROR]: ATTEMPT TO USE 0 AS DENOMINATOR!\n",__LINE__,__FILE__);}
-#define StartFromXOS  int main(int argc, char * argv[]){ if (!initialization(argc, argv)) ErrorReturn("program cannot be initializated!", false);
+#define StartFromXOS  int main(int argc, char * argv[]){ if (!initialization(argc, argv)) DebugError("program cannot be initializated!", false);
 #define EndWithHonor  return deconstruction(); }
 //}}}
 
@@ -75,9 +75,9 @@ real V_E = 14/3.0;
 real V_I = -2/3.0;
 real V_threshold = 1.0;
 
-FILE * plotter;
+// FILE * plotter;
 FILE * datahub;
-char * myPlotterFilename;
+// char * myPlotterFilename;
 char * myDatahubFilename;
 //}}}
 
@@ -106,12 +106,13 @@ boolean initialization(int user_command_number, char * user_commands[])/*{{{*/
         print("integer RK_order = %ld\n", RK_order_default);
         print("integer adjust_mode = %d\n",  adjust_mode_default);
     }
-    elif (user_command_number != 4)
+    elif (user_command_number != 5)
     {
-        print("Usage: singleNeuron RK_order adjust_mode t_click_number\n");
+        print("Usage: singleNeuron RK_order adjust_mode t_click_number m\n");
         print("\t RK_order is 2 or 4\n");
         print("\t adjust_mode is 1 or 0\n");
         print("\t t_click_number is an integer\n");
+        print("\t m is an integer usually  1 <= m <= 5 \n");
         return false;
     }
     else
@@ -138,24 +139,24 @@ boolean initialization(int user_command_number, char * user_commands[])/*{{{*/
         t_list[0]=0;
         len_t_list=1;
     }/*}}}*/
-    { // init the gnuplot things/*{{{*/
-        plotter = popen("gnuplot","w");
-        if (plotter==NULL) ErrorReturn("gnuplot pipe cannot open\n", false);
-        pprint(plotter,"set terminal post enh \n");
-        myPlotterFilename="neuron_voltage.pdf";
+//     { // init the gnuplot things/*{{{*/
+//         plotter = popen("gnuplot","w");
+//         if (plotter==NULL) DebugError("gnuplot pipe cannot open\n", false);
+//         pprint(plotter,"set terminal post enh \n");
+//         myPlotterFilename="neuron_voltage.pdf";
         myDatahubFilename="neuron_voltage.txt";
         datahub = fopen(myDatahubFilename, "w+");
-        if (datahub==NULL) ErrorReturn("data file cannot open\n", false);
-    }/*}}}*/
+        if (datahub==NULL) DebugError("data file cannot open\n", false);
+//     }/*}}}*/
     return true;
 }/*}}}*/
 
 boolean deconstruction()/*{{{*/
 {
-    pprint(plotter, "set output\n");
-    pprint(plotter, "set term wxt\n");
-    pprint(plotter, "\n");
-    pclose(plotter);
+//     pprint(plotter, "set output\n");
+//     pprint(plotter, "set term wxt\n");
+//     pprint(plotter, "\n");
+//     pclose(plotter);
     fclose(datahub);
     print("\nDeconstruction finished.\n");
     return true;
@@ -166,7 +167,7 @@ StartFromXOS
     {
         if   (RK_order==2) v_list[len_v_list] = RK2_stepper(neuron, v_list[len_v_list-1], t_list[len_t_list-1], t_step); // not matter RK2 or RK4,
         elif (RK_order==4) v_list[len_v_list] = RK4_stepper(neuron, v_list[len_v_list-1], t_list[len_t_list-1], t_step); // linear interpolation is used.
-        else ErrorReturn("only RK2 or RK4 are allowed!!",-1.0l);
+        else DebugError("only RK2 or RK4 are allowed!!",-1.0l);
         len_v_list ++;
         t_list[len_t_list] = t_list[len_t_list-1]+t_step; // the previous error was put this before v!!!
         len_t_list ++;                                    // this (t) and v can be exchanged, but not to change v to t_list[len_v_list-2]!!!
@@ -194,7 +195,7 @@ StartFromXOS
         print("\n\n");
     }/*}}}*/
     { // plot/*{{{*/
-        if (len_t_list != len_t_list) ErrorReturn("length of time and v is not the same.", false);
+        if (len_t_list != len_t_list) DebugError("length of time and v is not the same.", false);
         print("saving v_list to datahub...\n");
         for (int i=0; i<len_t_list; i++)
         {
@@ -209,8 +210,8 @@ StartFromXOS
             print("\n");
         }
         print("done.\n");
-        pprint(plotter, "set output '%s' \n", myPlotterFilename);
-        pprint(plotter, "plot \"%s\" using 1:2 with l lc 1  lw 1 title \"\"\n", myDatahubFilename);
+//         pprint(plotter, "set output '%s' \n", myPlotterFilename);
+//         pprint(plotter, "plot \"%s\" using 1:2 with l lc 1  lw 1 title \"\"\n", myDatahubFilename);
 
         print("\n");
     }/*}}}*/
@@ -257,17 +258,17 @@ real adjust_t_spike_delta()
 {/*{{{*/
     // linera interpolation codes for RK2
     real t_spike_delta;
-    if (V_threshold < v_list[len_v_list-2]) ErrorPrint("the last voltage > V_threshold!");
+    if (V_threshold < v_list[len_v_list-2]) DebugWrong("the last voltage > V_threshold!");
     if (v_list[len_v_list-1] < v_list[len_v_list-2])
     {
-        ErrorPrint("the current voltage < the last one!");
+        DebugWrong("the current voltage < the last one!");
         print("\t the current voltage is %lf ; while the last one %3.15lf!", v_list[len_v_list-1], v_list[len_v_list-2]);
     }
     t_spike_delta = t_step * (V_threshold - v_list[len_v_list-2]) / (v_list[len_v_list-1] - v_list[len_v_list-2]);
     if   (RK_order == 2) return t_spike_delta;
     elif (RK_order == 4) // use NewtonRaphsonMethod() and search from t_ret; DichotomySearch() also works well, but need to be more careful.
                          return NewtonRaphsonMethod(TimeCubicInterpolation, TimeCubicInterpolationDerivative, t_spike_delta);
-    else ErrorReturn("only RK2 or RK4 are allowed!!",-1.0l);
+    else DebugError("only RK2 or RK4 are allowed!!",-1.0l);
 }/*}}}*/
 
 real adjust_v_n()
@@ -284,7 +285,7 @@ real adjust_v_n()
         v_nPlus1 = v_n + v_Delta;
         return v_nPlus1;
     }
-    elif (RK_order != 2) ErrorReturn("only RK2 or RK4 are allowed!!",-1.0l);
+    elif (RK_order != 2) DebugError("only RK2 or RK4 are allowed!!",-1.0l);
     // the following are linera interpolation codes for RK2
     real v_nPlus1, v_n, t_spike_delta, K1, K2, t_n;
     t_n = t_list[len_t_list-2];
@@ -366,12 +367,12 @@ real DichotomySearch(real(*eq)(real), real x0, real x1, int deepth)
     elif (y_at_x1*y_at_mid < 0) DichotomySearch(eq, x1, mid, deepth+1);
     elif (deepth>=50)
     {
-        ErrorPrint("DetectZeroDenominator cannot find the root");
+        DebugWrong("DetectZeroDenominator cannot find the root");
         return mid;
     }
     else
     { //        if (eq(x0)*eq(x1) > 0)
-        ErrorPrint("You see this because your  eq(x0)*eq(x1)>0, or eq is not monotonous on the region between x0 and x1.");
+        DebugWrong("You see this because your  eq(x0)*eq(x1)>0, or eq is not monotonous on the region between x0 and x1.");
         return mid;
     }
 }/*}}}*/

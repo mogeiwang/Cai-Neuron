@@ -1,0 +1,1914 @@
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.302601
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.689571
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.104380
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.056669
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.023293
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.202491
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.446600
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.713991
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.408709
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.214520
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 1024000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000000976562500
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999983103 : Vol. 0.690454802741548
+Neuron #1 @ Time 0.999999999983103 : Vol. 0.690454802743248
+Neuron #2 @ Time 0.999999999983103 : Vol. 0.690454802741395
+Neuron #3 @ Time 0.999999999983103 : Vol. 0.690454802742459
+Neuron #4 @ Time 0.999999999983103 : Vol. 0.690454802742241
+Neuron #5 @ Time 0.999999999983103 : Vol. 0.690454802742256
+Neuron #6 @ Time 0.999999999983103 : Vol. 0.690454802741774
+Neuron #7 @ Time 0.999999999983103 : Vol. 0.690454802743030
+Neuron #8 @ Time 0.999999999983103 : Vol. 0.690454802741619
+Neuron #9 @ Time 0.999999999983103 : Vol. 0.690454802742536
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.071153
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.865217
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.923109
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.641420
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.620748
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.921408
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.331736
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.195085
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.353630
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.940731
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 1000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.001000000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #1 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #2 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #3 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #4 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #5 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #6 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #7 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #8 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Neuron #9 @ Time 1.000000000000001 : Vol. 0.219892345371736
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.071153
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.865217
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.923109
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.641420
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.620748
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.921408
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.331736
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.195085
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.353630
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.940731
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 2000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000500000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #1 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #2 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #3 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #4 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #5 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #6 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #7 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #8 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Neuron #9 @ Time 0.999999999999945 : Vol. 0.512249663253732
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.071153
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.865217
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.923109
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.641420
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.620748
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.921408
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.331736
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.195085
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.353630
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.940731
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 4000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000250000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #1 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #2 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #3 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #4 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #5 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #6 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #7 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #8 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Neuron #9 @ Time 0.999999999999918 : Vol. 0.590530530954006
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.071153
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.865217
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.923109
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.641420
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.620748
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.921408
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.331736
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.195085
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.353630
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.940731
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 8000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000125000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #1 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #2 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #3 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #4 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #5 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #6 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #7 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #8 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Neuron #9 @ Time 1.000000000000126 : Vol. 0.654821367228458
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.427748
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.775078
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.220800
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.459239
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.051196
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.136253
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.189809
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.986124
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.151958
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.521607
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 16000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000062500000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #1 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #2 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #3 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #4 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #5 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #6 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #7 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #8 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Neuron #9 @ Time 0.999999999999786 : Vol. 0.674945224049668
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.427748
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.775078
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.220800
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.459239
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.051196
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.136253
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.189809
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.986124
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.151958
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.521607
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 32000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000031250000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #1 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #2 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #3 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #4 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #5 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #6 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #7 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #8 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Neuron #9 @ Time 1.000000000000504 : Vol. 0.681633292809444
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.144727
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.101526
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.327183
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.599789
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.919539
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.079185
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.412340
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.076443
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.764450
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.691646
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 64000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000015625000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #1 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #2 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #3 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #4 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #5 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #6 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #7 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #8 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Neuron #9 @ Time 0.999999999999087 : Vol. 0.685788608102907
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.863719
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.430319
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.436508
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.742783
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.290629
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.525627
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.137838
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.669984
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.381121
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.865295
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 128000
+	 integer RK_order = 2
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000007812500000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #1 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #2 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #3 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #4 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #5 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #6 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #7 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #8 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Neuron #9 @ Time 1.000000000001931 : Vol. 0.688252722091707
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.011904
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.907490
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.749423
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.660803
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.393294
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.347155
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.800681
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.938334
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.210181
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.869267
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 1000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.001000000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000001 : Vol. 0.665132847685988
+Neuron #1 @ Time 1.000000000000001 : Vol. 0.665132847690748
+Neuron #2 @ Time 1.000000000000001 : Vol. 0.665132847688126
+Neuron #3 @ Time 1.000000000000001 : Vol. 0.665132847689064
+Neuron #4 @ Time 1.000000000000001 : Vol. 0.665132847689041
+Neuron #5 @ Time 1.000000000000001 : Vol. 0.665132847688395
+Neuron #6 @ Time 1.000000000000001 : Vol. 0.665132847688944
+Neuron #7 @ Time 1.000000000000001 : Vol. 0.665132847690021
+Neuron #8 @ Time 1.000000000000001 : Vol. 0.665132847686525
+Neuron #9 @ Time 1.000000000000001 : Vol. 0.665132847691871
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.011904
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.907490
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.749423
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.660803
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.393294
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.347155
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.800681
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.938334
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.210181
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.869267
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 2000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000500000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999945 : Vol. 0.686412554557701
+Neuron #1 @ Time 0.999999999999945 : Vol. 0.686412554560436
+Neuron #2 @ Time 0.999999999999945 : Vol. 0.686412554558802
+Neuron #3 @ Time 0.999999999999945 : Vol. 0.686412554559618
+Neuron #4 @ Time 0.999999999999945 : Vol. 0.686412554559316
+Neuron #5 @ Time 0.999999999999945 : Vol. 0.686412554558739
+Neuron #6 @ Time 0.999999999999945 : Vol. 0.686412554559653
+Neuron #7 @ Time 0.999999999999945 : Vol. 0.686412554559847
+Neuron #8 @ Time 0.999999999999945 : Vol. 0.686412554558087
+Neuron #9 @ Time 0.999999999999945 : Vol. 0.686412554560815
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.011904
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.907490
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.749423
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.660803
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.393294
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.347155
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.800681
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.938334
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.210181
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.869267
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 4000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000250000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999918 : Vol. 0.689496546475445
+Neuron #1 @ Time 0.999999999999918 : Vol. 0.689496546478176
+Neuron #2 @ Time 0.999999999999918 : Vol. 0.689496546476834
+Neuron #3 @ Time 0.999999999999918 : Vol. 0.689496546477270
+Neuron #4 @ Time 0.999999999999918 : Vol. 0.689496546477091
+Neuron #5 @ Time 0.999999999999918 : Vol. 0.689496546477091
+Neuron #6 @ Time 0.999999999999918 : Vol. 0.689496546477031
+Neuron #7 @ Time 0.999999999999918 : Vol. 0.689496546477867
+Neuron #8 @ Time 0.999999999999918 : Vol. 0.689496546475885
+Neuron #9 @ Time 0.999999999999918 : Vol. 0.689496546478793
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.011904
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.907490
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.749423
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.660803
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.393294
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.347155
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.800681
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.938334
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.210181
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.869267
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 8000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000125000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000126 : Vol. 0.690218056375439
+Neuron #1 @ Time 1.000000000000126 : Vol. 0.690218056377941
+Neuron #2 @ Time 1.000000000000126 : Vol. 0.690218056376404
+Neuron #3 @ Time 1.000000000000126 : Vol. 0.690218056377044
+Neuron #4 @ Time 1.000000000000126 : Vol. 0.690218056376784
+Neuron #5 @ Time 1.000000000000126 : Vol. 0.690218056376818
+Neuron #6 @ Time 1.000000000000126 : Vol. 0.690218056376721
+Neuron #7 @ Time 1.000000000000126 : Vol. 0.690218056377366
+Neuron #8 @ Time 1.000000000000126 : Vol. 0.690218056376120
+Neuron #9 @ Time 1.000000000000126 : Vol. 0.690218056377946
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.369993
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.317984
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.549587
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.980556
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.324457
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.564818
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.661232
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.230205
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.011700
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.453285
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 16000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000062500000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999786 : Vol. 0.690394681697134
+Neuron #1 @ Time 0.999999999999786 : Vol. 0.690394681697309
+Neuron #2 @ Time 0.999999999999786 : Vol. 0.690394681696954
+Neuron #3 @ Time 0.999999999999786 : Vol. 0.690394681698654
+Neuron #4 @ Time 0.999999999999786 : Vol. 0.690394681696187
+Neuron #5 @ Time 0.999999999999786 : Vol. 0.690394681697672
+Neuron #6 @ Time 0.999999999999786 : Vol. 0.690394681697808
+Neuron #7 @ Time 0.999999999999786 : Vol. 0.690394681697206
+Neuron #8 @ Time 0.999999999999786 : Vol. 0.690394681696818
+Neuron #9 @ Time 0.999999999999786 : Vol. 0.690394681698099
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.369993
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.317984
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.549587
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.980556
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.324457
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.564818
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.661232
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.230205
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.011700
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.453285
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 32000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000031250000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000504 : Vol. 0.690439677806910
+Neuron #1 @ Time 1.000000000000504 : Vol. 0.690439677806867
+Neuron #2 @ Time 1.000000000000504 : Vol. 0.690439677806595
+Neuron #3 @ Time 1.000000000000504 : Vol. 0.690439677807522
+Neuron #4 @ Time 1.000000000000504 : Vol. 0.690439677806408
+Neuron #5 @ Time 1.000000000000504 : Vol. 0.690439677807040
+Neuron #6 @ Time 1.000000000000504 : Vol. 0.690439677806967
+Neuron #7 @ Time 1.000000000000504 : Vol. 0.690439677807085
+Neuron #8 @ Time 1.000000000000504 : Vol. 0.690439677806400
+Neuron #9 @ Time 1.000000000000504 : Vol. 0.690439677807245
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.730034
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.235296
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.356025
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.302611
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.763341
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.290394
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.024573
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.530768
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.323110
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.540770
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 64000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000015625000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999087 : Vol. 0.690451078150846
+Neuron #1 @ Time 0.999999999999087 : Vol. 0.690451078150328
+Neuron #2 @ Time 0.999999999999087 : Vol. 0.690451078150839
+Neuron #3 @ Time 0.999999999999087 : Vol. 0.690451078150257
+Neuron #4 @ Time 0.999999999999087 : Vol. 0.690451078150789
+Neuron #5 @ Time 0.999999999999087 : Vol. 0.690451078151048
+Neuron #6 @ Time 0.999999999999087 : Vol. 0.690451078149678
+Neuron #7 @ Time 0.999999999999087 : Vol. 0.690451078151253
+Neuron #8 @ Time 0.999999999999087 : Vol. 0.690451078150357
+Neuron #9 @ Time 0.999999999999087 : Vol. 0.690451078150561
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.303250
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.971916
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.761343
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.260654
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.062363
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.449678
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.604920
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.412242
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.235735
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.291548
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 128000
+	 integer RK_order = 2
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000007812500000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000001931 : Vol. 0.690453861228918
+Neuron #1 @ Time 1.000000000001931 : Vol. 0.690453861230999
+Neuron #2 @ Time 1.000000000001931 : Vol. 0.690453861230189
+Neuron #3 @ Time 1.000000000001931 : Vol. 0.690453861229870
+Neuron #4 @ Time 1.000000000001931 : Vol. 0.690453861229650
+Neuron #5 @ Time 1.000000000001931 : Vol. 0.690453861230093
+Neuron #6 @ Time 1.000000000001931 : Vol. 0.690453861230592
+Neuron #7 @ Time 1.000000000001931 : Vol. 0.690453861229774
+Neuron #8 @ Time 1.000000000001931 : Vol. 0.690453861229921
+Neuron #9 @ Time 1.000000000001931 : Vol. 0.690453861230617
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.099523
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.539938
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.778003
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.366436
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.235816
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.057705
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.916274
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.891511
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.767682
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.722336
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 1000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.001000000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #1 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #2 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #3 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #4 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #5 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #6 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #7 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #8 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Neuron #9 @ Time 1.000000000000001 : Vol. 0.217663942041021
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.099523
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.539938
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.778003
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.366436
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.235816
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.057705
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.916274
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.891511
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.767682
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.722336
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 2000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000500000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #1 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #2 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #3 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #4 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #5 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #6 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #7 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #8 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Neuron #9 @ Time 0.999999999999945 : Vol. 0.512835849305701
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.457414
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.952933
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.580031
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.685921
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.169747
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.777837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.276508
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.186409
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.572410
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.306029
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 4000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000250000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #1 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #2 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #3 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #4 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #5 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #6 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #7 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #8 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Neuron #9 @ Time 0.999999999999918 : Vol. 0.590653351650759
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.457414
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.952933
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.580031
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.685921
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.169747
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.777837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.276508
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.186409
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.572410
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.306029
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 8000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000125000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #1 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #2 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #3 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #4 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #5 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #6 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #7 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #8 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Neuron #9 @ Time 1.000000000000126 : Vol. 0.654844605046700
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.457414
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.952933
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.580031
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.685921
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.169747
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.777837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.276508
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.186409
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.572410
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.306029
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 16000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000062500000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #1 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #2 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #3 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #4 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #5 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #6 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #7 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #8 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Neuron #9 @ Time 0.999999999999786 : Vol. 0.674950508898182
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.313796
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.364148
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.381620
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.003734
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.101459
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.997396
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.634902
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.478565
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.876374
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.387706
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 32000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000031250000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #1 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #2 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #3 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #4 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #5 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #6 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #7 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #8 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Neuron #9 @ Time 1.000000000000504 : Vol. 0.681634575948395
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.670271
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.775594
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.683558
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.321669
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.033428
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.217375
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.993458
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.771008
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.680840
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.969599
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 64000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000015625000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #1 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #2 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #3 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #4 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #5 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #6 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #7 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #8 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Neuron #9 @ Time 0.999999999999087 : Vol. 0.685788923240616
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.247686
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.016512
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.592242
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.284601
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.837686
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.880701
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.079489
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.158842
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.098340
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.726981
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 128000
+	 integer RK_order = 4
+	 integer ifAdj = 0
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000007812500000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #1 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #2 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #3 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #4 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #5 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #6 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #7 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #8 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Neuron #9 @ Time 1.000000000001931 : Vol. 0.688252800061849
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.040087
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.084620
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.106121
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.885565
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.011030
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.485837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.384918
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.637679
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.627329
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.650563
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 1000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.001000000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000001 : Vol. 0.685646521581585
+Neuron #1 @ Time 1.000000000000001 : Vol. 0.685646521582187
+Neuron #2 @ Time 1.000000000000001 : Vol. 0.685646521581089
+Neuron #3 @ Time 1.000000000000001 : Vol. 0.685646521583544
+Neuron #4 @ Time 1.000000000000001 : Vol. 0.685646521580194
+Neuron #5 @ Time 1.000000000000001 : Vol. 0.685646521583207
+Neuron #6 @ Time 1.000000000000001 : Vol. 0.685646521581158
+Neuron #7 @ Time 1.000000000000001 : Vol. 0.685646521582252
+Neuron #8 @ Time 1.000000000000001 : Vol. 0.685646521581748
+Neuron #9 @ Time 1.000000000000001 : Vol. 0.685646521582304
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.040087
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.084620
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.106121
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.885565
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.011030
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.485837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.384918
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.637679
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.627329
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.650563
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 2000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000500000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999945 : Vol. 0.690343683676600
+Neuron #1 @ Time 0.999999999999945 : Vol. 0.690343683677361
+Neuron #2 @ Time 0.999999999999945 : Vol. 0.690343683676258
+Neuron #3 @ Time 0.999999999999945 : Vol. 0.690343683678187
+Neuron #4 @ Time 0.999999999999945 : Vol. 0.690343683675987
+Neuron #5 @ Time 0.999999999999945 : Vol. 0.690343683677592
+Neuron #6 @ Time 0.999999999999945 : Vol. 0.690343683676708
+Neuron #7 @ Time 0.999999999999945 : Vol. 0.690343683677171
+Neuron #8 @ Time 0.999999999999945 : Vol. 0.690343683676873
+Neuron #9 @ Time 0.999999999999945 : Vol. 0.690343683677401
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.040087
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.084620
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.106121
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.885565
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.011030
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.485837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.384918
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.637679
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.627329
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.650563
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 4000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000250000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999918 : Vol. 0.690453100431482
+Neuron #1 @ Time 0.999999999999918 : Vol. 0.690453100432093
+Neuron #2 @ Time 0.999999999999918 : Vol. 0.690453100431191
+Neuron #3 @ Time 0.999999999999918 : Vol. 0.690453100432925
+Neuron #4 @ Time 0.999999999999918 : Vol. 0.690453100430890
+Neuron #5 @ Time 0.999999999999918 : Vol. 0.690453100432225
+Neuron #6 @ Time 0.999999999999918 : Vol. 0.690453100431847
+Neuron #7 @ Time 0.999999999999918 : Vol. 0.690453100431780
+Neuron #8 @ Time 0.999999999999918 : Vol. 0.690453100431738
+Neuron #9 @ Time 0.999999999999918 : Vol. 0.690453100432199
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.040087
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.084620
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.106121
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.885565
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.011030
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.485837
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.384918
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.637679
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.627329
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.650563
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 8000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000125000000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000126 : Vol. 0.690454780486604
+Neuron #1 @ Time 1.000000000000126 : Vol. 0.690454780486908
+Neuron #2 @ Time 1.000000000000126 : Vol. 0.690454780486122
+Neuron #3 @ Time 1.000000000000126 : Vol. 0.690454780488045
+Neuron #4 @ Time 1.000000000000126 : Vol. 0.690454780485589
+Neuron #5 @ Time 1.000000000000126 : Vol. 0.690454780487375
+Neuron #6 @ Time 1.000000000000126 : Vol. 0.690454780486501
+Neuron #7 @ Time 1.000000000000126 : Vol. 0.690454780486879
+Neuron #8 @ Time 1.000000000000126 : Vol. 0.690454780486772
+Neuron #9 @ Time 1.000000000000126 : Vol. 0.690454780486905
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.397425
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.494035
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.405893
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.704490
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.440875
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.702989
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.244561
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.927950
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.428178
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.733586
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 16000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000062500000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999786 : Vol. 0.690454802850925
+Neuron #1 @ Time 0.999999999999786 : Vol. 0.690454802851191
+Neuron #2 @ Time 0.999999999999786 : Vol. 0.690454802850899
+Neuron #3 @ Time 0.999999999999786 : Vol. 0.690454802851634
+Neuron #4 @ Time 0.999999999999786 : Vol. 0.690454802850529
+Neuron #5 @ Time 0.999999999999786 : Vol. 0.690454802851828
+Neuron #6 @ Time 0.999999999999786 : Vol. 0.690454802850210
+Neuron #7 @ Time 0.999999999999786 : Vol. 0.690454802852201
+Neuron #8 @ Time 0.999999999999786 : Vol. 0.690454802850218
+Neuron #9 @ Time 0.999999999999786 : Vol. 0.690454802851689
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.397425
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.494035
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.405893
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.704490
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.440875
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.702989
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.244561
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.927950
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.428178
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.733586
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 32000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000031250000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000000504 : Vol. 0.690454803198193
+Neuron #1 @ Time 1.000000000000504 : Vol. 0.690454803199338
+Neuron #2 @ Time 1.000000000000504 : Vol. 0.690454803198220
+Neuron #3 @ Time 1.000000000000504 : Vol. 0.690454803200220
+Neuron #4 @ Time 1.000000000000504 : Vol. 0.690454803197654
+Neuron #5 @ Time 1.000000000000504 : Vol. 0.690454803200586
+Neuron #6 @ Time 1.000000000000504 : Vol. 0.690454803197003
+Neuron #7 @ Time 1.000000000000504 : Vol. 0.690454803201089
+Neuron #8 @ Time 1.000000000000504 : Vol. 0.690454803197136
+Neuron #9 @ Time 1.000000000000504 : Vol. 0.690454803200430
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.117443
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.326241
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.018057
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.848667
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.815860
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.653034
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.471459
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.025909
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.049380
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.908934
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 64000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000015625000000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 0.999999999999087 : Vol. 0.690454803198701
+Neuron #1 @ Time 0.999999999999087 : Vol. 0.690454803200730
+Neuron #2 @ Time 0.999999999999087 : Vol. 0.690454803198962
+Neuron #3 @ Time 0.999999999999087 : Vol. 0.690454803200551
+Neuron #4 @ Time 0.999999999999087 : Vol. 0.690454803199730
+Neuron #5 @ Time 0.999999999999087 : Vol. 0.690454803199606
+Neuron #6 @ Time 0.999999999999087 : Vol. 0.690454803200524
+Neuron #7 @ Time 0.999999999999087 : Vol. 0.690454803199441
+Neuron #8 @ Time 0.999999999999087 : Vol. 0.690454803199166
+Neuron #9 @ Time 0.999999999999087 : Vol. 0.690454803201291
+Deconstruction finished.
+
+Initialization starts:
+using user set parameters, i.e.,
+Init voltage of neuron[0]: 0.330792
+angle of neuron[0]: 0.000000
+Init voltage of neuron[1]: 0.148769
+angle of neuron[1]: 0.000000
+Init voltage of neuron[2]: 0.118461
+angle of neuron[2]: 0.000000
+Init voltage of neuron[3]: 0.484719
+angle of neuron[3]: 0.000000
+Init voltage of neuron[4]: 0.679675
+angle of neuron[4]: 0.000000
+Init voltage of neuron[5]: 0.088878
+angle of neuron[5]: 0.000000
+Init voltage of neuron[6]: 0.188414
+angle of neuron[6]: 0.000000
+Init voltage of neuron[7]: 0.610977
+angle of neuron[7]: 0.000000
+Init voltage of neuron[8]: 0.153502
+angle of neuron[8]: 0.000000
+Init voltage of neuron[9]: 0.072072
+angle of neuron[9]: 0.000000
+There are 10 neurons:
+	 integer num_t_click = 128000
+	 integer RK_order = 4
+	 integer ifAdj = 1
+	 integer m = 5
+	 integer t_end = 1
+	 real t_step = 0.000007812500000
+
+For each neuron:
+	 real g_leak     = 50.000000000000000 
+	 real V_leak     = 0.000000000000000 
+	 real V_threshold= 1.000000000000000 
+	 real V_E        = 4.666666666666667 
+	 real V_I        = -0.666666666666667 
+	 real Tau_e      = 0.000600000000000 
+	 real Tau_i      = 0.001000000000000 
+	 real Ge0_intensity=25.000000000000000 
+	 real i0_intensity=0.000000000000000 
+	 real G_angleField =0.000000000000000 
+	 real coupleSpatial_s    = 1.000000000000000 
+	 real coupleSpatial_mu   = 0.000000000000000 
+	 real coupleSpatial_delta= 1.000000000000000 
+
+
+Neuron #0 @ Time 1.000000000001931 : Vol. 0.690454803221983
+Neuron #1 @ Time 1.000000000001931 : Vol. 0.690454803221353
+Neuron #2 @ Time 1.000000000001931 : Vol. 0.690454803221372
+Neuron #3 @ Time 1.000000000001931 : Vol. 0.690454803221533
+Neuron #4 @ Time 1.000000000001931 : Vol. 0.690454803222157
+Neuron #5 @ Time 1.000000000001931 : Vol. 0.690454803221016
+Neuron #6 @ Time 1.000000000001931 : Vol. 0.690454803221251
+Neuron #7 @ Time 1.000000000001931 : Vol. 0.690454803222358
+Neuron #8 @ Time 1.000000000001931 : Vol. 0.690454803221041
+Neuron #9 @ Time 1.000000000001931 : Vol. 0.690454803221413
+Deconstruction finished.

@@ -425,23 +425,12 @@ for tttt in range(t_click_number_default):
 #}}}
 
 figure()#{{{
-subplot(4,1,1)
-plot(neuron_iaf[0].t_list, neuron_iaf[0].v_list, label='$v^1$')
-xlim([0, t_end_default])
-ylabel("voltage of neuron 1")
-subplot(4,1,2)
-plot(neuron_iaf[1].t_list, neuron_iaf[1].v_list, label='$v^2$')
-xlim([0, t_end_default])
-ylabel("voltage of neuron 2")
-subplot(4,1,3)
-plot(neuron_iaf[2].t_list, neuron_iaf[2].v_list, label='$v^3$')
-xlim([0, t_end_default])
-ylabel("voltage of neuron 3")
-subplot(4,1,4)
-plot(neuron_iaf[3].t_list, neuron_iaf[3].v_list, label='$v^4$')
-xlim([0, t_end_default])
-ylabel("voltage of neuron 4")
-xlabel("time ($S$)")
+for i in range(neuron_number):
+    subplot(neuron_number, 1, i+1)
+    plot(neuron_iaf[i].t_list, neuron_iaf[i].v_list, label='$v^%d$'%i)
+    xlim([0, t_end_default])
+    ylabel("voltage of neuron %d"%i)
+
 # title("")
 savefig('coupled_Neurons.pdf', dpi=600)
 
