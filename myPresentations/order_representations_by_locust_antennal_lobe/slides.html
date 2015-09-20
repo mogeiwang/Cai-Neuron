@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
   <meta name="author" content="Mogei Wang" />
-  <title>Order representations by locust antennal lobe — A short review</title>
+  <title>Early events in olfactory processing in locust</title>
   <style type="text/css">code{white-space: pre;}</style>
 <style>
   html { background-color: black; }
@@ -75,16 +75,477 @@
   /* The items to-be-selected */
   .incremental > *[aria-selected] ~ * { opacity: 0.2; }
 </style>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
 <section class="title">
-  <h1 class="title">Order representations by locust antennal lobe — A short review</h1>
+  <h1 class="title">Early events in olfactory processing in locust</h1>
   <h2 class="author">Mogei Wang</h2>
-  <h3 class="date">Jun 20, 2015</h3>
+  <h3 class="date">2015, Shanghai</h3>
 </section>
-<section id="basic-circut-of-insect-antennal-lobe" class="titleslide slide level1"><h1><a href="#basic-circut-of-insect-antennal-lobe">Basic circut of insect antennal lobe</a></h1></section>
-<section id="order-representations-by-locust-antennal-lobe" class="titleslide slide level1"><h1><a href="#order-representations-by-locust-antennal-lobe">Order representations by locust antennal lobe</a></h1></section>
-<section id="a-large-scale-simulation" class="titleslide slide level1"><h1><a href="#a-large-scale-simulation">A large scale simulation</a></h1></section>
+<section id="outline" class="slide level1">
+<h1><a href="#outline">Outline</a></h1>
+<h4 id="introduction"><a href="#introduction">1 Introduction</a></h4>
+<h4 id="gross-anatomy-of-insects-olfactory-systems"><a href="#gross-anatomy-of-insects-olfactory-systems">2 Gross anatomy of insects’ olfactory systems</a></h4>
+<h4 id="investigations-on-early-stage-olfactory-processing"><a href="#investigations-on-early-stage-olfactory-processing">3 Investigations on early stage olfactory processing</a></h4>
+<h3 id="section"><a href="#section"><img src="./figures/locust.jpg" height="400"></a></h3>
+</section>
+<section id="introduction-1" class="slide level1">
+<h1><a href="#introduction-1">1 Introduction</a></h1>
+<h2 id="olfactory-system-is-important"><a href="#olfactory-system-is-important">1.1 Olfactory system is important</a></h2>
+<h3 id="to-individual-and-society"><a href="#to-individual-and-society">to individual and society</a></h3>
+<h3 id="section-1"><a href="#section-1"><img src="./figures/safari_ants.jpg" height="300"></a></h3>
+</section>
+<section class="slide level1">
+
+<h2 id="dimensionality-of-odor-space-is-very-high"><a href="#dimensionality-of-odor-space-is-very-high">1.2 Dimensionality of odor space is very high</a></h2>
+<p>Odor molecules differ with each other in many physical and biochemical aspects.</p>
+<ol class="incremental" type="1">
+<li>The differences between odor molecules are discrete.</li>
+<li>The differences cannot be adequately captured by just a few variables.</li>
+</ol>
+<ul class="incremental">
+<li>Chemical stimuli are difficult to parameterize or <em>manipulate</em>.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="olfactory-system-is-different"><a href="#olfactory-system-is-different">1.3 Olfactory system is different</a></h2>
+<p>The olfactory system disobeys some general rules of sensory systems:</p>
+<ol class="incremental" type="1">
+<li>It has a large amount of different types of receptors.</li>
+<li>It does not pass through thalamus before reaching cortex.</li>
+<li>It has less preprocessing steps.</li>
+</ol>
+<ul class="incremental">
+<li><em>Can the olfactory system be cheated?</em></li>
+</ul>
+</section>
+<section id="gross-anatomy-of-insects-olfactory-system" class="slide level1">
+<h1><a href="#gross-anatomy-of-insects-olfactory-system">2 Gross anatomy of insects’ olfactory system</a></h1>
+<h3 id="section-2"><a href="#section-2"><img src="./figures/olfactory.jpg" height="150"></a></h3>
+<ol class="incremental" type="1">
+<li>Their olfactory pathway starts at the antennae.</li>
+<li><strong>Olfactory receptor neurons (ORNs)</strong> in antennae carry the information on the odor to <strong>antennal lobe (AL)</strong>.</li>
+<li><strong>The odor information is transformed by the <em>projection neurons (PNs)</em> and <em>local neurons (LNs)</em> in AL.</strong></li>
+<li>PNs relay olfactory information to higher brain centers, e.g., <strong>mushroom body (MB)</strong> and lateral horn (LH).</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h2 id="pathway-in-insects-al"><a href="#pathway-in-insects-al">Pathway in insects’ AL</a></h2>
+<h3 id="section-3"><a href="#section-3"><img src="./figures/al_circut.jpg" height="300"></a></h3>
+<ol class="incremental" type="1">
+<li>4 kinds of neurons, ORNs, PNs (soma), LNs (soma), ENs.</li>
+<li>Most ORNs accept only one kind of odor molecules.</li>
+<li>PN: excitatory, 1 <strong>glomerulus</strong>; LN: inhibitory, no axon.</li>
+<li>EN: send feedback from higher brain centers.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h2 id="notes-for-locust"><a href="#notes-for-locust">Notes for locust</a></h2>
+<ol class="incremental" type="1">
+<li>Locust’s PN are mostly multiglomerular.</li>
+<li><table>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cells</td>
+<td style="text-align: left;">Numbers</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">——————–</td>
+<td style="text-align: left;">—————–</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ORNs</td>
+<td style="text-align: left;">~ 90 thousands</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PNs</td>
+<td style="text-align: left;">~ 900</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LNs</td>
+<td style="text-align: left;">~ 300</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KCs</td>
+<td style="text-align: left;">~ 50 thousands</td>
+</tr>
+</tbody>
+</table>
+Kenyon cells (KCs) are mushroom body neurons.</li>
+</ol>
+<ul class="incremental">
+<li><strong>Note for all insects:</strong> Their LNs can cross their ALs.</li>
+<li>For locusts, the PNs can also cross AL?</li>
+</ul>
+</section>
+<section id="investigations-on-early-stage-olfactory-processing-1" class="slide level1">
+<h1><a href="#investigations-on-early-stage-olfactory-processing-1">3 Investigations on early stage olfactory processing</a></h1>
+<p>It is mainly</p>
+<ul class="incremental">
+<li>considered to be an encoding or representation problem;</li>
+<li>feature abstraction, et al (information can be lost)?</li>
+<li>discussed based on the problem of classification.
+<ol class="incremental" type="1">
+<li>Spatial representation.</li>
+<li>Temporal representation:
+<ul class="incremental">
+<li>Laurent et al’s work</li>
+<li>Cai et al’s work</li>
+</ul></li>
+</ol></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="spatial-representation"><a href="#spatial-representation">3.1 Spatial representation</a></h2>
+<h3 id="section-4"><a href="#section-4"><img src="./figures/spatial_representations2.jpg" height="300"></a></h3>
+<ul class="incremental">
+<li>Retinotopic maps in visual cortex</li>
+<li>Isofrequency bands in auditory cortex</li>
+<li>Somatotopic maps in somatosensory cortex</li>
+<li><strong>Is odor space mapped in AL in a similar way?</strong></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="criterion-of-spatial-coding"><a href="#criterion-of-spatial-coding">Criterion of spatial coding</a></h3>
+<p>According to Knudsen et al. (1987), a map can be defined as a sensory representation where</p>
+<ol class="incremental" type="1">
+<li>Responses to particular stimulus are spatially clustered;</li>
+<li>There is a systematic relationship between a neuron’s tuning and its spatial position.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="nearby-glomerulus-response-to-more-common-odors"><a href="#nearby-glomerulus-response-to-more-common-odors">Nearby glomerulus response to more common odors</a></h3>
+<p>On the dorsal surface of <strong>mammalian olfactory bulb (OB)</strong>,</p>
+<ul class="incremental">
+<li>Responses to aliphatic aldehydes and carboxylic acids tend to cluster in the anteromedial portion of OB.</li>
+<li>Responses to ketones, aliphatic alcohols, and phenols cluster in the lateral portion.</li>
+<li>Responses to hydrocarbons cluster in the ventral portion.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="a-systematic-relationship"><a href="#a-systematic-relationship">A systematic relationship?</a></h3>
+<p>Systematic directional representations of other chemical features (size, polarity, etc.) have not been described in the OB.</p>
+<ol class="incremental" type="1">
+<li>Chemically similar odors tend to activate similar set of ORNs and similar glomerulus. The previous findings demonstrate no mapping.</li>
+<li>When single glomeruli are investigated, it appears that nearby glomeruli can differ dramatically in odor tuning.</li>
+<li>Given the high dimensionality of odor space, it is not obvious how a truly systematic relationship may exist.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="my-comment-on-spatial-representation"><a href="#my-comment-on-spatial-representation">My comment on spatial representation</a></h3>
+<p>Main idea: odor representation is a map from odor space to AL.</p>
+<ul class="incremental">
+<li>There are nontrivial findings.</li>
+<li>Olfactory systems can distinguish similar odor mixtures.<br /> Is it a good idea to use spatial representation?</li>
+<li>Insects’ LNs cross their ALs, and that may easy to cause global dynamics in ALs.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="temporal-representation"><a href="#temporal-representation">3.2 Temporal representation</a></h2>
+<h3 id="section-5"><a href="#section-5"><img src="./figures/temporal_patterning.jpg" width="700"></a></h3>
+<p>An odor and cell specific spike train.</p>
+<p>Only ~5-10% of Kenyon cells respond to any given odor, and the Kenyon cells that do respond fire only a few spikes.</p>
+</section>
+<section class="slide level1">
+
+<h3 id="criterion-of-temporal-coding"><a href="#criterion-of-temporal-coding">Criterion of temporal coding</a></h3>
+<p>According to Wilson et al (2006), there are two criteria defining a temporal code:</p>
+<ol class="incremental" type="1">
+<li>The spike fluctuations of a neuron must be faster than stimulus fluctuations, and</li>
+<li>Spike fluctuations must contain information about the stimulus from the point of view of a decoder.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="decoding-temporal-patterns"><a href="#decoding-temporal-patterns">Decoding Temporal Patterns</a></h3>
+<p>Fluctuation frequency usually is ignored here.</p>
+<p>Decoding:</p>
+<ul class="incremental">
+<li>Laurent et al’s algorithm based on PCA</li>
+<li>Cai et al’s algorithm on temporal bound neurons</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="laurent-et-als-work-on-pc-decoding"><a href="#laurent-et-als-work-on-pc-decoding">3.2.1 Laurent et al’s work on PC decoding</a></h3>
+<h3 id="reliable-response"><a href="#reliable-response">Reliable response</a></h3>
+<ul class="incremental">
+<li>Each trial is divided into successive 50 ms time bins, aligned at odor pulse onset.</li>
+<li>The number of spikes produced by each PN in each time bin was measured, and a PN was described as responding during time bin if it produced at least one action potential in that bin over six or more of the nine trials tested.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="percentage-of-responsive-pn-odor-pairs"><a href="#percentage-of-responsive-pn-odor-pairs">Percentage of responsive PN odor pairs</a></h3>
+<h3 id="section-6"><a href="#section-6"><img src="./figures/responding_PN_ratio.jpg" height="300"></a></h3>
+<ul class="incremental">
+<li>Only reliable responses are plot in the above subfigure.</li>
+<li>Stimulus durations are 0.3, 1, and 3s, respectively.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="percentage-of-responsive-pn-odor-pairs-1"><a href="#percentage-of-responsive-pn-odor-pairs-1">Percentage of responsive PN odor pairs</a></h3>
+<ol class="incremental" type="1">
+<li>At rest, fewer than 1% of all PNs response (reliably).</li>
+<li>After odor onset, the percentage of reliably responsive PNs immediately rose to between 8% and 10%.</li>
+<li>Of all the spikes produced during each time bin, 55% are due to the reliable responding PNs in that time bin.</li>
+<li>The identities of PNs change from time bin to time bin.</li>
+<li>~50%-60% of PNs can be described as responding at some time over the entire population response duration.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="pca-they-applied"><a href="#pca-they-applied">PCA they applied</a></h3>
+<p>For a given stimulus,</p>
+<ol class="incremental" type="1">
+<li>Divide the whole trial duration <span class="math">\(l\)</span> into small time bins with length <span class="math">\(w\)</span>, then there will be <span class="math">\(\frac{l}{w}\)</span> time bins.</li>
+<li>Suppose there are <span class="math">\(n\)</span> PNs, then we have a <span class="math">\(n\times \frac{l}{w}\)</span> matrix with each entry being the mean firing rate in the time bin.</li>
+<li>Average the matrix entries over all the trials.</li>
+<li>Perform <strong>principal component analysis</strong> on the matrix, project the <span class="math">\(n\)</span> dimensional data onto the first 3 principal components, and have the resulting 3 dimensional response orbits plotted.</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="pc-orbits"><a href="#pc-orbits">PC orbits</a></h3>
+<h3 id="section-7"><a href="#section-7"><img src="./figures/PCA_orbits.jpg" height="400"></a></h3>
+<h3 id="the-same-odor-durations-are-0.3-1-and-3s-respectively."><a href="#the-same-odor-durations-are-0.3-1-and-3s-respectively.">The same odor; durations are 0.3, 1, and 3s, respectively.</a></h3>
+</section>
+<section class="slide level1">
+
+<h3 id="according-to-patel-et-al-2009"><a href="#according-to-patel-et-al-2009">According to Patel et al (2009):</a></h3>
+<p>There are 5 stages of the first three principal components yielded an odor response orbit:</p>
+<ol class="incremental" type="1">
+<li>a transient dynamic portion of the orbit after stimulus onset;</li>
+<li>approach of the orbit to a fixed point (only when the stimulus duration is longer than 2s);</li>
+<li>stability of the orbit at the fixed point until stimulus offset;</li>
+<li>a transient dynamic deviation of the orbit away from rest after stimulus offset;</li>
+<li>decay of the orbit back to the network’s resting state.</li>
+</ol>
+<ul class="incremental">
+<li>The first three principal components captured more than 90% of the total data variance.</li>
+<li>Stimulus-response orbits resulting from single trial data matrices are similar to trial-averaged orbits.</li>
+<li>But the curves are rather sharp, is that reasonable?</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="section-8"><a href="#section-8"><img src="./figures/PCA_orbits2.jpg" height="200"></a></h3>
+<h3 id="section-9"><a href="#section-9"><img src="./figures/orbits_2in1.jpg" height="200"></a></h3>
+<ul class="incremental">
+<li>Orbits for different odors are very different.</li>
+<li>Orbits for the same odors are stable. (abstract model?)</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="a-bit-of-basic-ideas-of-winnerless-competition-model"><a href="#a-bit-of-basic-ideas-of-winnerless-competition-model">A bit of basic ideas of WinnerLess Competition model</a></h3>
+<p>According to Rabinovich et al. (2001):</p>
+<ol class="incremental" type="1">
+<li>consider an unstable periodic <span class="math">\(P\)</span> orbit selected from a chaotic attractor (<span class="math">\(P=\{p_1, p_2, \ldots, p_k\}, k&gt;1\)</span>);</li>
+<li>suppose odor <span class="math">\(s\)</span> corresponds to the point <span class="math">\(p_s\in P\)</span>;</li>
+<li>when odor <span class="math">\(s\)</span> arises, dynamics in a neighborhood of <span class="math">\(p_s\)</span> is changed from unstable to attactive in a time interval;</li>
+<li>if each odor is corresponded to a periodic point on the attactor, then all PC orbits are included in the attactor.</li>
+</ol>
+<ul class="incremental">
+<li>Although WLC dynamics may explain the transient portion of the PN-population response, a modification or a new framework may be needed to account for the fixed-point response. (Mazor and Laurent, 2005).</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="laurent-et-als-goal-track-decoding-success-over-time"><a href="#laurent-et-als-goal-track-decoding-success-over-time">Laurent et al’s goal: track decoding success over time</a></h3>
+<h3 id="section-10"><a href="#section-10"><img src="./figures/odor_surface_classfication.jpg" width="500"></a></h3>
+<ol class="incremental" type="A">
+<li>The activity of the PNs captured at four different time points. Only the first 2 principal components are plotted.</li>
+<li>Odor classification percentage over time (Individual vectors were attributed to the odor with the nearest centroid in the corresponding time bin. <strong>Violate causality??</strong>)</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="evoluation-of-distances-between-orbits-with-time"><a href="#evoluation-of-distances-between-orbits-with-time">Evoluation of distances between orbits with time</a></h3>
+<h3 id="section-11"><a href="#section-11"><img src="./figures/orbits_distance1.jpg" width="700"></a></h3>
+<ul class="incremental">
+<li>Instantaneous distances between mean odor trajectories (mean computed pairwise across all five odors).</li>
+<li>Mean instantaneous trial-to-trial distances, computed pairwise across all trials from different odors (top traces) and within the same odor (bottom traces).</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="my-comment-on-pc-decoding"><a href="#my-comment-on-pc-decoding">My comment on PC decoding</a></h3>
+<p>Main idea: odor is encoded in time-variant neurons’ activities.</p>
+<ul class="incremental">
+<li>Are the memories, notions, ideas processed in this way?</li>
+<li>How can the information contained in the PC orbit be transmitted to the mushroom body without loss of information? Can it be well decoded/processed there?<br />(Only ~100 PNs project to the mushroom body.)</li>
+<li>A real attractor structure? How the odor space is mapped to it? How neurons’ dynamics, coupling topology, and local field potential (LFP) affect the structure of attactor?<br /> (The 20Hz LFP in AL is an overall activity of the PNs.)</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="cai-et-als-work"><a href="#cai-et-als-work">3.2.2 Cai et al’s work</a></h2>
+<p>Cai et al studied the time-invariant role of neuron sets by examing the temporally bound triplets on a locust AL model (Patel et al 2013).</p>
+<p>Insteasd of comparing PN activity to an odor template that evolves with time, a single, time-invariant odor template is sufficient suppose in their decoding scheme.</p>
+</section>
+<section class="slide level1">
+
+<h3 id="about-the-model"><a href="#about-the-model">About the model</a></h3>
+<p>Bazhenov et al (2001) proposed a model to simulate locust’s AL. In their model, neurons (PNs and LNs) are Hodgkin-Huxley typed, and are randomly coupled through cholinergic (nACH), GABAergic (GABA), and slow synapse currents.</p>
+<h3 id="section-12"><a href="#section-12"><img src="./figures/AL-model.jpg" height="200"></a></h3>
+<pre><code>There are 90 PNs and 30 LNs in the network, and
+all connecting probabilities are 0.5.</code></pre>
+</section>
+<section class="slide level1">
+
+<h3 id="cai-et-als-improvement-on-the-model"><a href="#cai-et-als-improvement-on-the-model">Cai et al’s improvement on the model</a></h3>
+<p>Patel et al (2009) carefully adjusted the above model to make the model and its dynamics consistent with physiology and experiment observations:</p>
+<ol class="incremental" type="1">
+<li>sparse connectivity among PNs</li>
+<li>weak PN-PN synapses</li>
+<li>a prolonged rise and decay time of ORN input to PNs</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h3 id="cai-et-als-model"><a href="#cai-et-als-model">Cai et al’s model</a></h3>
+<ul class="incremental">
+<li>The network consisted of randomly interconnected 90 PNs and 30 LNs with cell-type specific connection probabilities.</li>
+<li>PNs are equipped with Hodgkin-Huxley sodium (Na) and potassium (K) spiking currents, and a transient K current.</li>
+<li>LNs are equipped with a calcium (Ca) current, a calcium-dependent K current, and a traditional K current.</li>
+<li>PN cholinergic (nACH) synapses and LN GABAergic synapses are modeled by fast-activating synaptic currents.</li>
+<li>A slow inhibitory synaptic current from LNs to PNs is introduced to reproduce the slow temporal patterns.</li>
+<li>PNs receive background current input in the form of a Poisson spike train to reproduce the background PN fires.</li>
+<li>An odor stimulates a set of 36 PNs and 12 LNs.</li>
+<li>Each stimulated cell received stimulus current in the form of 200 independent 35 Hz Poisson spike trains.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="preparations-of-temporal-bound-decoding"><a href="#preparations-of-temporal-bound-decoding">Preparations of temporal bound decoding</a></h3>
+<ul class="incremental">
+<li><p>Define <span class="math">\(P_{j,k|i}\)</span> as the probablity that <span class="math">\(j\)</span> and <span class="math">\(k\)</span> fire given <span class="math">\(i\)</span> fires, where <span class="math">\(i,j,k\)</span> consist an ordered triplet of PNs.</p></li>
+<li><p>Defined the <strong>binding index (BI)</strong> as the formula <span class="math">\[BI_{i,j,k} ={\mbox{min}}(P_{j,k|i}, P_{i,j|k}, P_{i,k|j}),\]</span> where <span class="math">\(i,j,k\)</span> consist a PN set.<br /><span class="math">\(BI_{i,j,k} = b\)</span> implies that, whenever any one of the 3 PNs fires, the other 2 PNs will fire concurrently with at least a probability <span class="math">\(b\)</span><br />(<span class="math">\(BI_{i,j,k} = 0\)</span> implies the PNs never fire together, while <span class="math">\(BI_{i,j,k} = 1\)</span> implies the PNs always fire together).</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="configurations-for-odor-specificity-of-triplets"><a href="#configurations-for-odor-specificity-of-triplets">Configurations for odor specificity of triplets</a></h3>
+<ul class="incremental">
+<li>Stimulate the network with 2 odors (odor 1 and odor 2)</li>
+<li>Different odors stimulating differing subsets of neurons</li>
+<li>Use a BI threshold of 0.65 to extract temporally bound triplets for each odor</li>
+<li>Networks are devoid of slow inhibition, but are still with operational GABA currents</li>
+<li>Suppose there are <span class="math">\(n_A\)</span> (<span class="math">\(n_B\)</span>) PNs in neuron subset <span class="math">\(A\)</span> (<span class="math">\(B\)</span>) corresponding to the odor 1 (2), with <span class="math">\(s\)</span> PNs present in both subsets, then the SDR is given by the formula SDR <span class="math">\[SDR=\frac{2({\mbox{min}}(n_A,n_B)-s)}{n_A+n_B}.\]</span> The SDR takes values close to 0 for two subsets of PNs that very similar in composition, and vice versa.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="odor-specificity-of-triplets"><a href="#odor-specificity-of-triplets">Odor specificity of triplets</a></h3>
+<h3 id="section-13"><a href="#section-13"><img src="./figures/odor_specificity_of_triplets.jpg" height="250"></a></h3>
+<ul class="incremental">
+<li>As the 2 odors become more dissimilar, the SDR rises and approaches unity in all three networks examined.</li>
+<li>Even for similar odors the SDR assumes non-zero values. Temporally bound triplets are sensitive to input variations.</li>
+<li>A randomly connected neuron network can have so interesting dynamical feature…</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="in-the-presence-of-slow-inhibition-current"><a href="#in-the-presence-of-slow-inhibition-current">In the presence of slow inhibition current</a></h3>
+<ul class="incremental">
+<li>Such a code cannot be undetected by their method in the network with slow inhibition current.</li>
+<li>The authors noticed that, following stimulus onset, the slow inhibitory current required several hundred milliseconds to grow in strength and reach a steady-state.</li>
+<li>They conjecture that a GABA-dependent binding code was indeed embedded in the network’s dynamics.</li>
+<li>It was undetected because it materialized only in a small time window close to stimulus onset, before temporally bound PNs were selectively silenced by slow inhibition.</li>
+<li>The authors hypothesize that GABA is responsible for the emergence of the temporal binding code, while the slow inhibition is to quiet temporally bound neurons once a newly encountered odor has been detected.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="contribution-of-slow-inhibition-and-gaba-currents"><a href="#contribution-of-slow-inhibition-and-gaba-currents">Contribution of slow inhibition and GABA currents</a></h3>
+<p>According to the study conduced by Patel et al (2009):</p>
+<ol class="incremental" type="1">
+<li>If GABA input to PNs is removed, then LFP in AL will be lost, but the resulting PC orbits exhibit qualitatively similar behavior to that of the fully intact network.</li>
+<li>If slow inhibition is removed from the network, the LFP oscillations will keep intact (or enhanced), but the response orbits are drastically changed (after stimulus offset, the orbit essentially retrace its path back to rest).</li>
+</ol>
+<p>According to Mazor and Laurent (2005), the mean oscillatory power of LFP reaches a peak in ~300 ms of PN-population activation onset. The period of peak oscillatory power corresponds to the dynamic phase when the PN-population vector evolves away from rest but before it reaches its odor-specific fixed point.</p>
+</section>
+<section class="slide level1">
+
+<h3 id="examination-of-temporal-bound-neurons"><a href="#examination-of-temporal-bound-neurons">Examination of temporal bound neurons</a></h3>
+<h3 id="section-14"><a href="#section-14"><img src="./figures/KC_spikes.jpg" height="250"></a></h3>
+<ul class="incremental">
+<li>The authors constructed hypothetical, odor-specific KCs.</li>
+<li>For each odor, use BI threshold ~0.65 to recover triplets.</li>
+<li>The odor <span class="math">\(k\)</span>-specific KC (KC <span class="math">\(k\)</span>) designated to fired, whenever ~70% PNs corresponding to odor <span class="math">\(k\)</span> spiked.</li>
+<li>KC <span class="math">\(k\)</span> responds during (almost only) in trials of odor <span class="math">\(k\)</span>.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h3 id="my-comment-on-cai-et-als-work"><a href="#my-comment-on-cai-et-als-work">My comment on Cai et al’s work</a></h3>
+<p>Main idea: odor representation is the redistribution of charges.</p>
+<ul class="incremental">
+<li>Seems very reasonable a decoding scheme, but cannot be approved by experiments soon. (Recordings cannot be collected simultaneously from many cells.)</li>
+<li>How much information is contained in the selected spikes? Are there some key dynamical features lost (at some click, most PNs may spike together)?</li>
+<li>Is it supported by connection topology between PNs and KCs? How much of the synchrony spiking information is sent to mushroom body? Do ORNs map odors to PNs and LNs in the expected way? (Only ~100 PNs project to MB.)</li>
+<li>What is the capacity of a given network? How many odors can be identified in total in this way?</li>
+<li>Can reliably responses be reproduced in their simulation? How about the PC orbits of temporal bound neurons?</li>
+</ul>
+</section>
+<section id="summary" class="slide level1">
+<h1><a href="#summary">4 Summary</a></h1>
+<ol class="incremental" type="1">
+<li>A rather simple chemical and biological device have done really nontrivial encodings.</li>
+<li>The temporal decoding schemes seems very promising.</li>
+</ol>
+<ul class="incremental">
+<li>Laurent et al’s scheme: takes an odor as a whole thing.</li>
+<li>Cai et al’s scheme: different neuron plays different role.</li>
+</ul>
+<ol class="incremental" type="1">
+<li>Synchronization of PN spikes may have played an important role.</li>
+<li>The onset transient process may be very important.</li>
+<li>The redundant odor stimulus is suppressed.</li>
+</ol>
+</section>
+<section id="further-thinkings" class="slide level1">
+<h1><a href="#further-thinkings">Further thinkings</a></h1>
+<ol class="incremental" type="1">
+<li>More attention to be paid on the connections among ORNs, PNs/LNs, and KCs. (analog information?)</li>
+<li>Other coupling topologies? Compare structure and features of locust AL with the other insects’ ALs?</li>
+<li>More refined data on stimulus and neurons activity would be helpful, e.g., AL’s responses for carefully mixed odors.</li>
+</ol>
+</section>
+<section id="main-references" class="slide level1">
+<h1><a href="#main-references">Main References</a></h1>
+<ol class="incremental" type="1">
+<li>R I Wilson, Z F Mainen. Early events in olfactory processing. Annual Review of Neuroscience, 29, 163, 2006</li>
+<li>O Mazor, G Laurent. Transient dynamics versus fixed points in odor representations by locust antennal lobe projection neurons. Neuron, 48, 661, 2005</li>
+<li>M Patel, A V Rangan, D Cai. A large-scale model of the locust antennal lobe. Journal of Computational Neuroscience, 27, 553, 2009</li>
+<li>M Patel, A V Rangan, D Cai. Coding of odors by temporal binding within a model network of the locust antennal lobe. Frontiers in Computational Neuroscience, 7, 50, 2013</li>
+<li>and many others…</li>
+</ol>
+</section>
+<section class="slide level1">
+
+<h2 id="thank-you-for-your-attention"><a href="#thank-you-for-your-attention">Thank you for your attention!</a></h2>
+<h2 id="questions"><a href="#questions">Questions?</a></h2>
+<h2 id="section-15"><a href="#section-15"><img src="./figures/question.jpg" width="500"></a></h2>
+</section>
+<section class="slide level1">
+
+<h2 id="thank-you-for-your-attention-1"><a href="#thank-you-for-your-attention-1">Thank you for your attention!</a></h2>
+<h2 id="questions-1"><a href="#questions-1">Questions?</a></h2>
+<h2 id="section-16"><a href="#section-16"><img src="./figures/question.jpg" width="500"></a></h2>
+</section>
 <!-- {{{{ dzslides core
 #
 #

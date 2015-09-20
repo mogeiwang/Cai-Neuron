@@ -1,0 +1,118 @@
+\documentclass[12pt, a4paper]{article}%{{{
+\usepackage{tipa}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{latexsym, lineno, indentfirst, caption2}
+\usepackage[super,square,comma,numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+% \usepackage{subcaption}
+\usepackage{graphicx,color,overpic}
+\usepackage[loose]{subfigure}
+\usepackage[rflt]{floatflt}
+\usepackage{multirow}
+%\usepackage[nomarkers]{endfloat}
+\usepackage{diagbox}
+% \usepackage{supertabular}
+% \listfiles
+%%% ------------------------------
+\setlength{\topmargin}{-1cm} \setlength{\oddsidemargin}{0mm}
+\textwidth 16cm \textheight 24cm \parskip=6pt \subfigcapmargin=6mm
+\newcommand{\newsection}[1]{\section {#1} \setcounter{equation}{0}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\renewcommand{\baselinestretch}{1.5}
+\renewcommand{\textfraction}{0.3}
+%%% ------------------------------
+\citestyle{nature}
+\begin{document}
+\newcommand{\lr}[1]{\langle #1 \rangle}
+\newcommand{\llr}[1]{\langle \hspace{-2.5pt} \langle #1 \rangle \hspace{-2.5pt} \rangle}
+%%% &=& &=& &=& &=& &=& &=& &=& &=& %%% &=& &=& &=& &=& &=& &=& &=& &=& %%% &=& &=& &=& &=%}}}
+
+\title{Model of Patel-Rangan-Cai on J Comput Neurosci 09}%{{{
+\vspace{-30mm} \author{Reproduction, by Mogei Wang, in 2015-9-6, at NYUAD} \date{} \maketitle
+
+\section{Membrane potentials}%{{{
+
+The membrane potential for each PN is governed by the following equation:
+$$ C_{m}\frac{dV_{PN}}{dt} = -g_{L}(V_{PN}-E_{L}) -I_{Na} -I_{K} -I_{A} -I_{GABA} -I_{nACH} -I_{stim} -I_{slow}, $$
+where $C_{m}=1.0\mu F, g_{L}=0.3\mu S, E_{L}=-64mV$.
+
+The membrane potential for each LN is governed by the following equation:
+$$ C_{m}\frac{dV_{LN}}{dt} = -g_{L}(V_{LN}-E_{L}) -I_{Ca} -I_{K} -I_{B} -I_{GABA} -I_{nACH} -I_{stim}, $$
+where $C_{m}=1.0\mu F, g_{L}=0.3\mu S, E_{L}=-50mV$.
+%}}}
+
+\section{Intrinsic currents}%{{{
+The intrinsic currents consisted of fast sodium and potassium currents $I_{Na}$ and $I_{K}$, a transient calcium current $I_{Ca}$, a calcium-dependent potassium current $I_{B}$, and a transient potassium current $I_{A}$. All such currents obeyed equations of the following form:
+$$ I_{j} =g_{j}m^{M}h^{N}(V-E_{j}), $$ where $j$ is $K, Na, Ca, A$ or $B$.
+
+The maximal conductances were $g_{Na} = 120 \mu S, g_{K} = 3.6 \mu S, g_{A} = 1.43 \mu S$ for PNs; and $g_{Ca} = 5.0 \mu S, g_{B} = 0.045 \mu S, g_{K} = 36 \mu S$ for LNs.
+
+For PNs, the reversal potentials were $E_{Na} = 40 mV,  E_{K} = E_{A} = -87 mV$; and for LNs, they were $E_{Ca} = 140 mV, E_{K} = E_{B} = -95 mV$.
+
+The gating variables $m$ and $h$ take values between 0 and 1 and obey the following equations:
+$$ \frac{dm}{dt} = \frac{m_{\infty}(V)-m}{\tau_{m}(V)}, $$
+and
+$$ \frac{dh}{dt} = \frac{h_{\infty}(V)-h}{\tau_{h}(V)}. $$
+
+Detailed parameters can be found from Table~[\ref{tab:gating1}] and [\ref{tab:gating2}], where the dynamics of intracellular calcium concentration $[Ca]$ were governed by the following equation:
+$$\frac{d[Ca]}{dt} = -AI_{Ca} - \frac{[Ca]-[Ca]_{\infty}}{\tau},$$
+where $[Ca]_{\infty} = 0.00024 mM , A = 0.0002 (mM \cdot cm^{2}) /(ms \cdot \mu A), \tau = 150 ms.$
+
+\begin{table}[htop]
+\centering
+\caption[gating]{$m$ parameters for gating variables} \label{tab:gating1}
+\begin{tabular}{c|c|c|c}
+\hline
+Gating   & $M$ & $m_{\infty}$                      & $\tau_{m}$           \\\hline
+$I_{Na}$  & 3 & $\frac{0.1v-2.5}{0.1v-2.5+4(1-e^{0.1V-2.5})e^{\frac{V}{18}}}$ & $\frac{e^{0.1v-2.5}}{0.1v-2.5+4(1-e^{0.1V-2.5})e^{\frac{V}{18}}}$ \\
+$I_{K}$   & 4 & $\frac{0.01(V-10)}{0.01(V-10)+0.125e^{\frac{v}{80}}}$ & $\frac{e^{\frac{v-10}{10}}-1}{0.01(V-10)+0.125e^{\frac{v}{80}}}$ \\
+$I_{Ca}$  & 2 & $\frac{1}{1+e^{-\frac{V+20}{6.5}}}$ & $1+0.014(V+30)$        \\  %% checked
+$I_{A}$   & 4 & $\frac{1}{1+e^{-\frac{V+60}{8.5}}}$ & 0.1+$\frac{0.27}{ e^{\frac{V + 35.8}{19.7}} + e^{-\frac{V + 79.7}{12.7}}}$ \\
+$I_{B}$  &  1 &  $\frac{[Ca]}{[Ca]+2}$           & $\frac{100}{[Ca]+2}$  \\\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htop]
+\centering
+\caption[gating]{$h$ parameters for gating variables} \label{tab:gating2}
+\begin{tabular}{c|c|c|c}
+\hline
+Gating   & $N$ & $h_{\infty}$                   & $\tau_{h}$ \\\hline
+$I_{Na}$  & 1 & $\frac{0.07e^{0.05V}(e^{0.1V-3}+1)}{1+0.07e^{0.05V}(e^{0.1V-3}+1)}$ & $\frac{e^{0.1V-3}+1}{1+0.07e^{0.05V}(e^{0.1V-3}+1)}$ \\
+$I_{K}$   & 0 &  -                            & - \\
+$I_{Ca}$  & 1 &  $\frac{1}{1+e^{\frac{V+25}{12}}}$ & $0.3e^{\frac{V-40}{13}} + 0.002e^{-\frac{V-60}{29}}$ \\  %% checked
+$I_{A}$   & 1 &  $\frac{1}{1+e^{\frac{V+78}{6}}}$ &  5.1 ($V> -63mV$) \\
+         &   &                                & $\frac{0.27}{e^{\frac{V+46}{5}}} +e^{-\frac{V+238}{37.5}}$ (else) \\
+$I_{B}$  & 0  &  -                            & - \\\hline
+\end{tabular}
+\end{table}
+%}}}
+
+\section{Synaptic currents}%{{{
+The GABA and nicotinic acetylcholine currents were governed by equations of the following form:
+$$I_{j} = g_{j} [O](V - E_{j} ), $$ where $j$ is $nACH$ or $GABA$.
+
+The reversal potentials were $E_{nACH} = 0 mV$ and $E_{GABA} = -70 mV$ for both PNs and LNs.
+For PNs, the maximal synaptic conductances were $g_{GABA} = 0.36\mu S$ (from LNs to this PN), $g_{nACH} = 0.009\mu S$ (from other PNs to this PN); and for LNs, they were $g_{GABA} = 0.3\mu S$ (from other LNs to this LN), $g_{nACH} = 0.045 \mu S$ (from PNs to this LN).
+
+The fraction of open channels [O] obeyed the equation $$\frac{d[O]}{dt} = \alpha(1 - [O])[T] - \beta [O].$$
+
+For GABAergic synapses the rate constants were $\alpha = 10 ms^{-1} , \beta = 0.16 ms^{-1}$, while for nicotinic acetylcholine synapses the rate constants were $\alpha = 10 ms^{-1}, \beta = 0.2 ms^{-1}$.
+
+For GABAergic synapses $[T]$ was governed by the equation $[T] = \frac{1}{1 + e^{\frac{-(V(t) - V_{0})}{\sigma}} },$ where $V_{0} = -20 mV , \sigma = 1.5$.
+
+For nicotinic acetylcholine synapses $[T]$ was governed by the equation $$[T] = A \theta(t_{0} + t_{max} - t) \theta(t - t_{0}),$$ where $\theta(x)$ is the Heaviside step function, $t_{0}$ is the time of receptor activation, $A = 0.5$, and $t_{max} = 0.3 ms$.
+
+The slow inhibitory current from LNs to PNs was governed by the following scheme:
+$$ I_{slow} = g_{slow}(V-E_{K})\frac{[G]^{4}}{[G]^{4}+K}, $$ where
+$$ \frac{d[G]}{dt} = r_{3}[R] -r_{4}[G] \mbox{ ; and in turn   } \frac{d[R]}{dt} = r_{1} (1-[R])[T]-r_{2}[R],$$ $g_{slow} = 0.36 \mu S$ from LNs to PNs only, the reversal potential was $E_{K} = -95 mV$ and $K = 100 \mu M^{4}$; rate constants were $r_{3} = 0.1 ms^{-1}$, $r_{4} = 0.033 ms^{-1}$, $r_{1} = 0.5 mM^{-1}ms^{-1}$, and $r_{2} = 0.0013 ms^{-1}$
+%}}}
+
+% \begin{thebibliography}{99}\scriptsize%{{{
+% \bibitem{Patel2009}
+% M. Patel, A. V. Rangan, D. Cai. A large scale model of the locust antennal lobe. J comput neurosci, 2009.
+% \end{thebibliography}
+\end{document}%}}}
