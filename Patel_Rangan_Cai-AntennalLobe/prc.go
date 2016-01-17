@@ -8,6 +8,7 @@ package main
 // brilliant , Dec 23, 2015, init, SJTU, Shanghai
 //           , Dec 26, 2015, Ver1, SJTU, Shanghai
 //           , Dec 30, 2015, Ver2, SJTU, Shanghai
+//           , Jan 04, 2016, Ver3, SJTU, Shanghai
 // A 1.0.1 update:
 // a) init_matrix has its own rand.Seed now
 // b) xN_V_list, xN_stim_list sampling rate reset to 1item per ms
@@ -140,6 +141,13 @@ package main
 // a) fix some mapset related codes to make it run faster...
 // b) introduce if_init_rt_plots to control gnuplot initialization for later potential use
 // c) use if_runtime_trace to control the trace of running of codes or not
+// B 3.0.1 update:
+// a) plot_fluct_xN_id changed to consts
+// b) vars ..._Vfluct_... changed to ..._vFluct_...
+// c) vars ..._Vraster... changed to ..._vRaster...
+// B 3.1 update:
+// a) do NOT print spike number of presynaptic neuron & postsynapric neuron any more
+// b) thresholds etc. defined as consts
 
 import (
 	"encoding/csv"
@@ -163,6 +171,8 @@ const (
 	if_readin_matrix = 0 // readin matrix or randomly set?
 	if_init_rt_plots = 1 // >0 init gnuolot, <0 do not init.
 	if_runtime_trace = 0
+	plot_fluct_PN_id = 0 // which PN fluction to plot?
+	plot_fluct_LN_id = 0
 	// ...
 	ms_per_second int64 = 1000               // 1000 ms = 1 S
 	time_end      int64 = 10 * ms_per_second // run how many ms; always start from 0! !!!
@@ -223,9 +233,9 @@ var (
 	if_PN_plot          int64 = 1 // >0 set to plot, <0 set to pause.
 	if_LN_plot          int64 = 1 // >0 set to plot, <0 set to pause.
 	if_stimRaster_plot  int64 = 1 // >0 set to plot, <0 set to pause.
-	if_Vraster_plot     int64 = 1 // >0 set to plot, <0 set to pause.
+	if_vRaster_plot     int64 = 1 // >0 set to plot, <0 set to pause.
 	if_synaRaster_plot  int64 = 1 // >0 set to plot, <0 set to pause.
-	if_Vfluct_plot      int64 = 1 // >0 set to plot, <0 set to pause. voltages of PNs and LNs
+	if_vFluct_plot      int64 = 1 // >0 set to plot, <0 set to pause. voltages of PNs and LNs
 	if_stimFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
@@ -241,14 +251,12 @@ var (
 	PN_stim_baseline float64 = -1.14423
 	PN_stim_plusORNs float64 = -1.79143
 	// more configurations:
-	matrix_seed      int64 = 0 // rand.seed() in init_matrix()
-	odor_slip        int64 = 0 // how many stimulated PNs are chosen from right (max IDs)
-	odor_PN_set      mapset.Set
-	odor_LN_set      mapset.Set
-	plot_fluct_PN_id int64 = 0 // which PN fluction to plot?
-	plot_fluct_LN_id int64 = 0
-	tracy_opt              = tracey.Options{DisableTracing: if_runtime_trace <= 0}
-	Exit, Enter            = tracey.New(&tracy_opt)
+	matrix_seed int64 = 0 // rand.seed() in init_matrix()
+	odor_slip   int64 = 0 // how many stimulated PNs are chosen from right (max IDs)
+	odor_PN_set mapset.Set
+	odor_LN_set mapset.Set
+	tracy_opt   = tracey.Options{DisableTracing: if_runtime_trace <= 0}
+	Exit, Enter = tracey.New(&tracy_opt)
 )
 
 ////////////////////////////////////////////////////////////
@@ -256,10 +264,11 @@ var (
 ///////////////// define the neuron classes ////////////////
 ////////////////////////////////////////////////////////////
 
-var (
-	V_rest_PN float64 = -75.0
-	V_rest_LN float64 = -60.0
-	CLOCK     float64 = 0.0
+const (
+	V_rest_PN      = -75.0
+	V_rest_LN      = -60.0
+	V_threshold_PN = 0
+	V_threshold_LN = -20
 	// ...
 	C_m_PN float64 = 1.0
 	g_L_PN float64 = 0.3
@@ -268,31 +277,36 @@ var (
 	g_L_LN float64 = 0.3
 	E_L_LN float64 = 50.0
 	// ...
-	g_K_PN    float64 = 3.6
-	g_Na_PN   float64 = 120.0
-	g_A_PN    float64 = 1.43
-	E_K_PN    float64 = 87.0
-	E_Na_PN   float64 = -40.0
-	E_A_PN    float64 = 87.0
+	g_K_PN  float64 = 3.6
+	g_Na_PN float64 = 120.0
+	g_A_PN  float64 = 1.43
+	E_K_PN  float64 = 87.0
+	E_Na_PN float64 = -40.0
+	E_A_PN  float64 = 87.0
+	// ...
+	g_K_LN  float64 = 36.0
+	g_Ca_LN float64 = 5.0
+	g_B_LN  float64 = 0.045
+	E_K_LN  float64 = 95.0
+	E_Ca_LN float64 = -140.0
+	E_B_LN  float64 = 95.0
+)
+
+var (
 	g_GABA_PN float64 = 0.36  // LN --[GABA]-> PN
 	g_nACH_PN float64 = 0.009 // PN --[nACH]-> PN
 	g_slow_PN float64 = 0.36  // LN --[slow]-> PN
+	g_GABA_LN float64 = 0.3   // LN --[GABA]-> LN
+	g_nACH_LN float64 = 0.045 // PN --[nACH]-> LN
+	// ...
 	E_GABA_PN float64 = 70.0
 	E_nACH_PN float64 = 0.0
 	E_slow_PN float64 = 95.0
-	// ...
-	g_K_LN    float64 = 36.0
-	g_Ca_LN   float64 = 5.0
-	g_B_LN    float64 = 0.045
-	E_K_LN    float64 = 95.0
-	E_Ca_LN   float64 = -140.0
-	E_B_LN    float64 = 95.0
-	g_GABA_LN float64 = 0.3   // LN --[GABA]-> LN
-	g_nACH_LN float64 = 0.045 // PN --[nACH]-> LN
 	E_GABA_LN float64 = 70.0
 	E_nACH_LN float64 = 0.0
 	// ...
-	err error = nil
+	CLOCK float64 = 0.0
+	err   error   = nil
 )
 
 type PNtype struct { //PN struct
@@ -810,65 +824,6 @@ func save_matrix() {
 	fmt.Println()
 }
 
-func disp_presync_num() {
-	var i, j int64
-	defer Exit(Enter("$FN()"))
-	var LN2PN_slow_spkSum [PN_number]float64 // computing sums in column (postsynaptic)
-	var LN2PN_GABA_spkSum [PN_number]float64
-	var LN2LN_GABA_spkSum [LN_number]float64
-	var PN2PN_nACH_spkSum [PN_number]float64
-	var PN2LN_nACH_spkSum [LN_number]float64
-	// ...
-	for i = 0; i < LN_number; i++ { // ln to pn ; slow
-		for j = 0; j < PN_number; j++ {
-			LN2PN_slow_spkSum[j] += LN2PN_slow_mat[i][j] * LN_spike_freq[i]
-		}
-	}
-	for i = 0; i < LN_number; i++ { // ln to pn ; GABA
-		for j = 0; j < PN_number; j++ {
-			LN2PN_GABA_spkSum[j] += LN2PN_GABA_mat[i][j] * LN_spike_freq[i]
-		}
-	}
-	for i = 0; i < LN_number; i++ { // ln to ln
-		for j = 0; j < LN_number; j++ {
-			LN2LN_GABA_spkSum[j] += LN2LN_GABA_mat[i][j] * LN_spike_freq[i]
-		}
-	}
-	for i = 0; i < PN_number; i++ { // pn to pn
-		for j = 0; j < PN_number; j++ {
-			PN2PN_nACH_spkSum[j] += PN2PN_nACH_mat[i][j] * PN_spike_freq[i]
-		}
-	}
-	for i = 0; i < PN_number; i++ { // pn to ln
-		for j = 0; j < LN_number; j++ {
-			PN2LN_nACH_spkSum[j] += PN2LN_nACH_mat[i][j] * PN_spike_freq[i]
-		}
-	}
-	// ...
-	fmt.Println("For each postsynaptic neuron, how many presynaptic neuron it has?")
-	fmt.Println("\tLN2PN_slow_spkSum ")
-	for i = 0; i < PN_number; i++ {
-		fmt.Printf("\t\t%.1f \t-->--PN[%03d]-->--\t %.1f\n", LN2PN_slow_spkSum[i], i, PN_spike_freq[i])
-	}
-	fmt.Println("\tLN2PN_GABA_spkSum ")
-	for i = 0; i < PN_number; i++ {
-		fmt.Printf("\t\t%.1f \t-->--PN[%03d]-->--\t %.1f\n", LN2PN_GABA_spkSum[i], i, PN_spike_freq[i])
-	}
-	fmt.Println("\tLN2LN_GABA_spkSum ")
-	for i = 0; i < LN_number; i++ {
-		fmt.Printf("\t\t%.1f \t-->--LN[%03d]-->--\t %.1f\n", LN2LN_GABA_spkSum[i], i, LN_spike_freq[i])
-	}
-	fmt.Println("\tPN2PN_nACH_spkSum ")
-	for i = 0; i < PN_number; i++ {
-		fmt.Printf("\t\t%.1f \t-->--PN[%03d]-->--\t %.1f\n", PN2PN_nACH_spkSum[i], i, PN_spike_freq[i])
-	}
-	fmt.Println("\tPN2LN_nACH_spkSum ")
-	for i = 0; i < LN_number; i++ {
-		fmt.Printf("\t\t%.1f \t-->--LN[%03d]-->--\t %.1f\n", PN2LN_nACH_spkSum[i], i, LN_spike_freq[i])
-	}
-	fmt.Println()
-}
-
 func forward_states_PN(id int64) {
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= PN_number {
@@ -883,7 +838,7 @@ func forward_states_PN(id int64) {
 	PN_reactor[id][1].O_nACH = PN_reactor[id][0].O_nACH + PN_reactor[id][0].dfdt_O_nACH()*time_stepLen
 	PN_reactor[id][1].V = PN_reactor[id][0].V + PN_reactor[id][0].dfdt_V()*time_stepLen
 	// ...
-	if PN_reactor[id][0].V <= 0 && PN_reactor[id][1].V > 0 {
+	if PN_reactor[id][0].V <= V_threshold_PN && PN_reactor[id][1].V > V_threshold_PN {
 		PN_reactor[id][1].lastSpike = CLOCK
 		PN_spike_freq[id] += float64(ms_per_second) / float64(time_end) // plus 1 in the form freq in S
 	} else {
@@ -908,7 +863,7 @@ func forward_states_LN(id int64) {
 	LN_reactor[id][1].R_slow = LN_reactor[id][0].R_slow + LN_reactor[id][0].dfdt_R_slow()*time_stepLen
 	LN_reactor[id][1].V = LN_reactor[id][0].V + LN_reactor[id][0].dfdt_V()*time_stepLen // mereged after [new2]
 	// ...
-	if LN_reactor[id][0].V <= -20 && LN_reactor[id][1].V > -20 { // is this set properly?
+	if LN_reactor[id][0].V <= V_threshold_LN && LN_reactor[id][1].V > V_threshold_LN { // is this set properly?
 		LN_reactor[id][1].lastSpike = CLOCK
 		LN_spike_freq[id] += float64(ms_per_second) / float64(time_end) // plus 1 in the form freq in S
 	} else { // reveised after [try]
@@ -1165,8 +1120,8 @@ var (
 	ms_per_frame int64 = 750 // millisecond per frame
 	// ...
 	filename_config             string = "config.yaml"
-	filename_Vraster_PN         string = strings.Join([]string{plot_file_dir, "plot_Vraster_PN.txt"}, "")    // will be added an appendix
-	filename_Vraster_LN         string = strings.Join([]string{plot_file_dir, "plot_Vraster_LN.txt"}, "")    // in proc_filenames(),
+	filename_vRaster_PN         string = strings.Join([]string{plot_file_dir, "plot_vRaster_PN.txt"}, "")    // will be added an appendix
+	filename_vRaster_LN         string = strings.Join([]string{plot_file_dir, "plot_vRaster_LN.txt"}, "")    // in proc_filenames(),
 	filename_stimRaster_PN      string = strings.Join([]string{plot_file_dir, "plot_stimRaster_PN.txt"}, "") // so that
 	filename_stimRaster_LN      string = strings.Join([]string{plot_file_dir, "plot_stimRaster_LN.txt"}, "") // many processes
 	filename_synaRaster_slow_PN string = strings.Join([]string{plot_file_dir, "plot_synaRaster_slow_PN.txt"}, "")
@@ -1175,8 +1130,8 @@ var (
 	filename_synaRaster_nACH_PN string = strings.Join([]string{plot_file_dir, "plot_synaRaster_nACH_PN.txt"}, "")
 	filename_synaRaster_nACH_LN string = strings.Join([]string{plot_file_dir, "plot_synaRaster_nACH_LN.txt"}, "")
 	// ...
-	filename_Vfluct_PN         string = strings.Join([]string{plot_file_dir, "plot_Vfluct_PN.txt"}, "") // can be run
-	filename_Vfluct_LN         string = strings.Join([]string{plot_file_dir, "plot_Vfluct_LN.txt"}, "") // simultaneously...
+	filename_vFluct_PN         string = strings.Join([]string{plot_file_dir, "plot_vFluct_PN.txt"}, "") // can be run
+	filename_vFluct_LN         string = strings.Join([]string{plot_file_dir, "plot_vFluct_LN.txt"}, "") // simultaneously...
 	filename_stimFluct_PN      string = strings.Join([]string{plot_file_dir, "plot_stimFluct_PN.txt"}, "")
 	filename_stimFluct_LN      string = strings.Join([]string{plot_file_dir, "plot_stimFluct_LN.txt"}, "")
 	filename_synaFluct_slow_PN string = strings.Join([]string{plot_file_dir, "plot_synaFluct_slow_PN.txt"}, "")
@@ -1186,12 +1141,12 @@ var (
 	filename_synaFluct_nACH_LN string = strings.Join([]string{plot_file_dir, "plot_synaFluct_nACH_LN.txt"}, "")
 	// ...
 	file_config                            *os.File
-	file_Vraster_PN, file_Vraster_LN       *os.File
-	plot_Vraster_PN, plot_Vraster_LN       *gnuplot.Plotter
+	file_vRaster_PN, file_vRaster_LN       *os.File
+	plot_vRaster_PN, plot_vRaster_LN       *gnuplot.Plotter
 	file_stimRaster_PN, file_stimRaster_LN *os.File
 	plot_stimRaster_PN, plot_stimRaster_LN *gnuplot.Plotter
-	file_Vfluct_PN, file_Vfluct_LN         *os.File
-	plot_Vfluct_PN, plot_Vfluct_LN         *gnuplot.Plotter
+	file_vFluct_PN, file_vFluct_LN         *os.File
+	plot_vFluct_PN, plot_vFluct_LN         *gnuplot.Plotter
 	file_stimFluct_PN, file_stimFluct_LN   *os.File
 	plot_stimFluct_PN, plot_stimFluct_LN   *gnuplot.Plotter
 	// ...
@@ -1289,14 +1244,14 @@ func init_para() { // add more thing to write at initial?
 		_, _ = file_config.WriteString("if_stimRaster_plot: ")
 		_, _ = file_config.Write([]byte(strconv.FormatInt(if_stimRaster_plot, 10)))
 		_, _ = file_config.WriteString("\n")
-		_, _ = file_config.WriteString("if_Vraster_plot: ")
-		_, _ = file_config.Write([]byte(strconv.FormatInt(if_Vraster_plot, 10)))
+		_, _ = file_config.WriteString("if_vRaster_plot: ")
+		_, _ = file_config.Write([]byte(strconv.FormatInt(if_vRaster_plot, 10)))
 		_, _ = file_config.WriteString("\n")
 		_, _ = file_config.WriteString("if_synaRaster_plot: ")
 		_, _ = file_config.Write([]byte(strconv.FormatInt(if_synaRaster_plot, 10)))
 		_, _ = file_config.WriteString("\n")
-		_, _ = file_config.WriteString("if_Vfluct_plot: ")
-		_, _ = file_config.Write([]byte(strconv.FormatInt(if_Vfluct_plot, 10)))
+		_, _ = file_config.WriteString("if_vFluct_plot: ")
+		_, _ = file_config.Write([]byte(strconv.FormatInt(if_vFluct_plot, 10)))
 		_, _ = file_config.WriteString("\n")
 		_, _ = file_config.WriteString("if_stimFluct_plot: ")
 		_, _ = file_config.Write([]byte(strconv.FormatInt(if_stimFluct_plot, 10)))
@@ -1395,9 +1350,9 @@ func proc_para(yaml_obj map[interface{}]interface{}) {
 	if_PN_plot = int64(yaml_obj["if_PN_plot"].(int))
 	if_LN_plot = int64(yaml_obj["if_LN_plot"].(int))
 	if_stimRaster_plot = int64(yaml_obj["if_stimRaster_plot"].(int))
-	if_Vraster_plot = int64(yaml_obj["if_Vraster_plot"].(int))
+	if_vRaster_plot = int64(yaml_obj["if_vRaster_plot"].(int))
 	if_synaRaster_plot = int64(yaml_obj["if_synaRaster_plot"].(int))
-	if_Vfluct_plot = int64(yaml_obj["if_Vfluct_plot"].(int))
+	if_vFluct_plot = int64(yaml_obj["if_vFluct_plot"].(int))
 	if_stimFluct_plot = int64(yaml_obj["if_stimFluct_plot"].(int))
 	if_synaFluct_plot = int64(yaml_obj["if_synaFluct_plot"].(int))
 	// ...
@@ -1424,8 +1379,8 @@ func proc_para(yaml_obj map[interface{}]interface{}) {
 func proc_filenames() {
 	var randInt int64 = int64(rand.Intn(10e15))
 	defer Exit(Enter("$FN()"))
-	filename_Vraster_PN = fmt.Sprintf("%s %15d", filename_Vraster_PN, randInt)
-	filename_Vraster_LN = fmt.Sprintf("%s %15d", filename_Vraster_LN, randInt)
+	filename_vRaster_PN = fmt.Sprintf("%s %15d", filename_vRaster_PN, randInt)
+	filename_vRaster_LN = fmt.Sprintf("%s %15d", filename_vRaster_LN, randInt)
 	filename_stimRaster_PN = fmt.Sprintf("%s %15d", filename_stimRaster_PN, randInt)
 	filename_stimRaster_LN = fmt.Sprintf("%s %15d", filename_stimRaster_LN, randInt)
 	filename_synaRaster_slow_PN = fmt.Sprintf("%s %15d", filename_synaRaster_slow_PN, randInt)
@@ -1434,8 +1389,8 @@ func proc_filenames() {
 	filename_synaRaster_nACH_PN = fmt.Sprintf("%s %15d", filename_synaRaster_nACH_PN, randInt)
 	filename_synaRaster_nACH_LN = fmt.Sprintf("%s %15d", filename_synaRaster_nACH_LN, randInt)
 	// ...
-	filename_Vfluct_PN = fmt.Sprintf("%s %15d", filename_Vfluct_PN, randInt)
-	filename_Vfluct_LN = fmt.Sprintf("%s %15d", filename_Vfluct_LN, randInt)
+	filename_vFluct_PN = fmt.Sprintf("%s %15d", filename_vFluct_PN, randInt)
+	filename_vFluct_LN = fmt.Sprintf("%s %15d", filename_vFluct_LN, randInt)
 	filename_stimFluct_PN = fmt.Sprintf("%s %15d", filename_stimFluct_PN, randInt)
 	filename_stimFluct_LN = fmt.Sprintf("%s %15d", filename_stimFluct_LN, randInt)
 	filename_synaFluct_slow_PN = fmt.Sprintf("%s %15d", filename_synaFluct_slow_PN, randInt)
@@ -1447,9 +1402,9 @@ func proc_filenames() {
 
 func open_plot_files() {
 	defer Exit(Enter("$FN()"))
-	file_Vraster_PN, err = os.OpenFile(filename_Vraster_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+	file_vRaster_PN, err = os.OpenFile(filename_vRaster_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
-	file_Vraster_LN, err = os.OpenFile(filename_Vraster_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+	file_vRaster_LN, err = os.OpenFile(filename_vRaster_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
 	file_stimRaster_PN, err = os.OpenFile(filename_stimRaster_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
@@ -1467,9 +1422,9 @@ func open_plot_files() {
 	file_synaRaster_nACH_LN, err = os.OpenFile(filename_synaRaster_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
 	// ...
-	file_Vfluct_PN, err = os.OpenFile(filename_Vfluct_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+	file_vFluct_PN, err = os.OpenFile(filename_vFluct_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
-	file_Vfluct_LN, err = os.OpenFile(filename_Vfluct_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+	file_vFluct_LN, err = os.OpenFile(filename_vFluct_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
 	file_stimFluct_PN, err = os.OpenFile(filename_stimFluct_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
@@ -1490,8 +1445,8 @@ func open_plot_files() {
 
 func close_plot_files() {
 	defer Exit(Enter("$FN()"))
-	file_Vfluct_PN.Sync()
-	file_Vfluct_LN.Sync()
+	file_vFluct_PN.Sync()
+	file_vFluct_LN.Sync()
 	file_stimFluct_PN.Sync()
 	file_stimFluct_LN.Sync()
 	// ...
@@ -1503,8 +1458,8 @@ func close_plot_files() {
 	// ...
 	file_stimRaster_PN.Sync()
 	file_stimRaster_LN.Sync()
-	file_Vraster_PN.Sync()
-	file_Vraster_LN.Sync()
+	file_vRaster_PN.Sync()
+	file_vRaster_LN.Sync()
 	// ...
 	file_synaRaster_slow_PN.Sync()
 	file_synaRaster_GABA_PN.Sync()
@@ -1512,8 +1467,8 @@ func close_plot_files() {
 	file_synaRaster_nACH_PN.Sync()
 	file_synaRaster_nACH_LN.Sync()
 	// ...
-	file_Vfluct_PN.Close()
-	file_Vfluct_LN.Close()
+	file_vFluct_PN.Close()
+	file_vFluct_LN.Close()
 	file_stimFluct_PN.Close()
 	file_stimFluct_LN.Close()
 	// ...
@@ -1525,8 +1480,8 @@ func close_plot_files() {
 	// ...
 	file_stimRaster_PN.Close()
 	file_stimRaster_LN.Close()
-	file_Vraster_PN.Close()
-	file_Vraster_LN.Close()
+	file_vRaster_PN.Close()
+	file_vRaster_LN.Close()
 	// ...
 	file_synaRaster_slow_PN.Close()
 	file_synaRaster_GABA_PN.Close()
@@ -1642,65 +1597,65 @@ func init_synaRaster_plot() {
 	plot_synaRaster_nACH_LN.CheckedCmd("set yrange [-0.5:%v]", float64(LN_number)-0.5)
 }
 
-func init_Vraster_plot() {
+func init_vRaster_plot() {
 	defer Exit(Enter("$FN()"))
 	plotname := ""
 	persist := false // if close the plotting frame when the plot is done
 	debug := false
 	vPalette := "set palette defined(0 '#FFFFCC', 3 '#FFEDA0', 6 '#FED976', 9 '#FEB24C', 11 '#FD8D3C', 12 '#FC4E2A', 13 '#E31A1C', 14 '#B10026')"
-	plot_Vraster_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
+	plot_vRaster_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
 	check(err)
-	plot_Vraster_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
+	plot_vRaster_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
 	check(err)
 	// ...
-	plot_Vraster_PN.CheckedCmd("reset")
-	plot_Vraster_PN.CheckedCmd("set term gif size 800,400 delay 100")
-	plot_Vraster_PN.CheckedCmd("set term X11")
-	plot_Vraster_PN.CheckedCmd("set title \" membrane voltage (mV) raster of each PN\"")
-	plot_Vraster_PN.SetXLabel("Current Time (ms)")
-	plot_Vraster_PN.SetYLabel("PN number")
-	plot_Vraster_PN.CheckedCmd("set cbrange [-80:40]")
-	plot_Vraster_PN.CheckedCmd("set view map")
-	plot_Vraster_PN.CheckedCmd(vPalette)
-	plot_Vraster_PN.CheckedCmd("set yrange [-0.5:%v]", float64(PN_number)-0.5)
+	plot_vRaster_PN.CheckedCmd("reset")
+	plot_vRaster_PN.CheckedCmd("set term gif size 800,400 delay 100")
+	plot_vRaster_PN.CheckedCmd("set term X11")
+	plot_vRaster_PN.CheckedCmd("set title \" membrane voltage (mV) raster of each PN\"")
+	plot_vRaster_PN.SetXLabel("Current Time (ms)")
+	plot_vRaster_PN.SetYLabel("PN number")
+	plot_vRaster_PN.CheckedCmd("set cbrange [-80:40]")
+	plot_vRaster_PN.CheckedCmd("set view map")
+	plot_vRaster_PN.CheckedCmd(vPalette)
+	plot_vRaster_PN.CheckedCmd("set yrange [-0.5:%v]", float64(PN_number)-0.5)
 	// ...
-	plot_Vraster_LN.CheckedCmd("reset")
-	plot_Vraster_LN.CheckedCmd("set term gif size 800,400 delay 100")
-	plot_Vraster_LN.CheckedCmd("set term X11")
-	plot_Vraster_LN.CheckedCmd("set title \" membrane voltage (mV) raster of each LN\"")
-	plot_Vraster_LN.SetXLabel("Current Time (ms)")
-	plot_Vraster_LN.SetYLabel("LN number")
-	plot_Vraster_LN.CheckedCmd("set cbrange [-80:0]")
-	plot_Vraster_LN.CheckedCmd("set view map")
-	plot_Vraster_LN.CheckedCmd(vPalette)
-	plot_Vraster_LN.CheckedCmd("set yrange [-0.5:%v]", float64(LN_number)-0.5)
+	plot_vRaster_LN.CheckedCmd("reset")
+	plot_vRaster_LN.CheckedCmd("set term gif size 800,400 delay 100")
+	plot_vRaster_LN.CheckedCmd("set term X11")
+	plot_vRaster_LN.CheckedCmd("set title \" membrane voltage (mV) raster of each LN\"")
+	plot_vRaster_LN.SetXLabel("Current Time (ms)")
+	plot_vRaster_LN.SetYLabel("LN number")
+	plot_vRaster_LN.CheckedCmd("set cbrange [-80:0]")
+	plot_vRaster_LN.CheckedCmd("set view map")
+	plot_vRaster_LN.CheckedCmd(vPalette)
+	plot_vRaster_LN.CheckedCmd("set yrange [-0.5:%v]", float64(LN_number)-0.5)
 }
 
-func init_Vfluct_plot() {
+func init_vFluct_plot() {
 	defer Exit(Enter("$FN()"))
 	plotname := ""
 	persist := false // if close the plotting frame when the plot is done
 	debug := false
-	plot_Vfluct_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
+	plot_vFluct_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
 	check(err)
-	plot_Vfluct_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
+	plot_vFluct_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
 	check(err)
 	// ...
-	plot_Vfluct_PN.CheckedCmd("reset")
-	plot_Vfluct_PN.CheckedCmd("set term gif size 800,400 delay 100")
-	plot_Vfluct_PN.CheckedCmd("set term X11")
-	plot_Vfluct_PN.CheckedCmd("set title \" membrane voltage (mV) fluction of given PN \"")
-	plot_Vfluct_PN.SetXLabel("Current Time (ms)")
-	plot_Vfluct_PN.SetYLabel("Voltage (mV)")
-	plot_Vfluct_PN.CheckedCmd("set yrange [-80:40]")
+	plot_vFluct_PN.CheckedCmd("reset")
+	plot_vFluct_PN.CheckedCmd("set term gif size 800,400 delay 100")
+	plot_vFluct_PN.CheckedCmd("set term X11")
+	plot_vFluct_PN.CheckedCmd("set title \" membrane voltage (mV) fluction of given PN \"")
+	plot_vFluct_PN.SetXLabel("Current Time (ms)")
+	plot_vFluct_PN.SetYLabel("Voltage (mV)")
+	plot_vFluct_PN.CheckedCmd("set yrange [-80:40]")
 	// ...
-	plot_Vfluct_LN.CheckedCmd("reset")
-	plot_Vfluct_LN.CheckedCmd("set term gif size 800,400 delay 100")
-	plot_Vfluct_LN.CheckedCmd("set term X11")
-	plot_Vfluct_LN.CheckedCmd("set title \" membrane voltage (mV) fluction of given LN \"")
-	plot_Vfluct_LN.SetXLabel("Current Time (ms)")
-	plot_Vfluct_LN.SetYLabel("Voltage(mV)")
-	plot_Vfluct_LN.CheckedCmd("set yrange [-80:0]")
+	plot_vFluct_LN.CheckedCmd("reset")
+	plot_vFluct_LN.CheckedCmd("set term gif size 800,400 delay 100")
+	plot_vFluct_LN.CheckedCmd("set term X11")
+	plot_vFluct_LN.CheckedCmd("set title \" membrane voltage (mV) fluction of given LN \"")
+	plot_vFluct_LN.SetXLabel("Current Time (ms)")
+	plot_vFluct_LN.SetYLabel("Voltage(mV)")
+	plot_vFluct_LN.CheckedCmd("set yrange [-80:0]")
 }
 
 func init_stimFluct_plot() {
@@ -1789,21 +1744,11 @@ func init_synaFluct_plot() {
 
 func init_plot() {
 	defer Exit(Enter("$FN()"))
-	if plot_fluct_PN_id < 0 {
-		plot_fluct_PN_id = 0
-	} else if plot_fluct_PN_id >= PN_number {
-		plot_fluct_PN_id = PN_number - 1
-	}
-	if plot_fluct_LN_id < 0 {
-		plot_fluct_LN_id = 0
-	} else if plot_fluct_LN_id >= LN_number {
-		plot_fluct_LN_id = LN_number - 1
-	}
 	// ...
 	init_stimRaster_plot()
-	init_Vraster_plot()
+	init_vRaster_plot()
 	init_synaRaster_plot()
-	init_Vfluct_plot()
+	init_vFluct_plot()
 	init_stimFluct_plot()
 	init_synaFluct_plot()
 }
@@ -1823,17 +1768,17 @@ func dest_plot() {
 		os.Remove(filename_stimRaster_LN)
 	}
 	// ...
-	plot_Vraster_PN.CheckedCmd("set output")
-	plot_Vraster_PN.CheckedCmd("replot")
-	plot_Vraster_PN.CheckedCmd("quit")
-	if exist_file(filename_Vraster_PN) {
-		os.Remove(filename_Vraster_PN)
+	plot_vRaster_PN.CheckedCmd("set output")
+	plot_vRaster_PN.CheckedCmd("replot")
+	plot_vRaster_PN.CheckedCmd("quit")
+	if exist_file(filename_vRaster_PN) {
+		os.Remove(filename_vRaster_PN)
 	}
-	plot_Vraster_LN.CheckedCmd("set output")
-	plot_Vraster_LN.CheckedCmd("replot")
-	plot_Vraster_LN.CheckedCmd("quit")
-	if exist_file(filename_Vraster_LN) {
-		os.Remove(filename_Vraster_LN)
+	plot_vRaster_LN.CheckedCmd("set output")
+	plot_vRaster_LN.CheckedCmd("replot")
+	plot_vRaster_LN.CheckedCmd("quit")
+	if exist_file(filename_vRaster_LN) {
+		os.Remove(filename_vRaster_LN)
 	}
 	// ...
 	plot_synaRaster_slow_PN.CheckedCmd("set output")
@@ -1867,17 +1812,17 @@ func dest_plot() {
 		os.Remove(filename_synaRaster_nACH_LN)
 	}
 	// ...
-	plot_Vfluct_PN.CheckedCmd("set output")
-	plot_Vfluct_PN.CheckedCmd("replot")
-	plot_Vfluct_PN.CheckedCmd("quit")
-	if exist_file(filename_Vfluct_PN) {
-		os.Remove(filename_Vfluct_PN)
+	plot_vFluct_PN.CheckedCmd("set output")
+	plot_vFluct_PN.CheckedCmd("replot")
+	plot_vFluct_PN.CheckedCmd("quit")
+	if exist_file(filename_vFluct_PN) {
+		os.Remove(filename_vFluct_PN)
 	}
-	plot_Vfluct_LN.CheckedCmd("set output")
-	plot_Vfluct_LN.CheckedCmd("replot")
-	plot_Vfluct_LN.CheckedCmd("quit")
-	if exist_file(filename_Vfluct_LN) {
-		os.Remove(filename_Vfluct_LN)
+	plot_vFluct_LN.CheckedCmd("set output")
+	plot_vFluct_LN.CheckedCmd("replot")
+	plot_vFluct_LN.CheckedCmd("quit")
+	if exist_file(filename_vFluct_LN) {
+		os.Remove(filename_vFluct_LN)
 	}
 	// ...
 	plot_stimFluct_PN.CheckedCmd("set output")
@@ -1944,16 +1889,16 @@ func write_plot_files_PN(cur_ms int64) { // update the data that are need to wri
 			_, _ = file_stimRaster_PN.WriteString("\n")
 		}
 		// write both stim and v files...
-		if if_Vraster_plot > 0 {
+		if if_vRaster_plot > 0 {
 			for id = 0; id < PN_number; id++ {
-				_, _ = file_Vraster_PN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
-				_, _ = file_Vraster_PN.WriteString("  ")
-				_, _ = file_Vraster_PN.Write([]byte(strconv.FormatInt(id, 10)))
-				_, _ = file_Vraster_PN.WriteString("  ")
-				_, _ = file_Vraster_PN.Write([]byte(strconv.FormatFloat(PN_V_list[plotStep][id], 'f', 15, 64)))
-				_, _ = file_Vraster_PN.WriteString("\n")
+				_, _ = file_vRaster_PN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
+				_, _ = file_vRaster_PN.WriteString("  ")
+				_, _ = file_vRaster_PN.Write([]byte(strconv.FormatInt(id, 10)))
+				_, _ = file_vRaster_PN.WriteString("  ")
+				_, _ = file_vRaster_PN.Write([]byte(strconv.FormatFloat(PN_V_list[plotStep][id], 'f', 15, 64)))
+				_, _ = file_vRaster_PN.WriteString("\n")
 			}
-			_, _ = file_Vraster_PN.WriteString("\n")
+			_, _ = file_vRaster_PN.WriteString("\n")
 		}
 		// ...
 		if if_synaRaster_plot > 0 {
@@ -2005,16 +1950,16 @@ func write_plot_files_LN(cur_ms int64) { // update the data that are need to wri
 			_, _ = file_stimRaster_LN.WriteString("\n")
 		}
 		// write both stim and v files...
-		if if_Vraster_plot > 0 {
+		if if_vRaster_plot > 0 {
 			for id = 0; id < LN_number; id++ {
-				_, _ = file_Vraster_LN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
-				_, _ = file_Vraster_LN.WriteString("  ")
-				_, _ = file_Vraster_LN.Write([]byte(strconv.FormatInt(id, 10)))
-				_, _ = file_Vraster_LN.WriteString("  ")
-				_, _ = file_Vraster_LN.Write([]byte(strconv.FormatFloat(LN_V_list[plotStep][id], 'f', 15, 64)))
-				_, _ = file_Vraster_LN.WriteString("\n")
+				_, _ = file_vRaster_LN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
+				_, _ = file_vRaster_LN.WriteString("  ")
+				_, _ = file_vRaster_LN.Write([]byte(strconv.FormatInt(id, 10)))
+				_, _ = file_vRaster_LN.WriteString("  ")
+				_, _ = file_vRaster_LN.Write([]byte(strconv.FormatFloat(LN_V_list[plotStep][id], 'f', 15, 64)))
+				_, _ = file_vRaster_LN.WriteString("\n")
 			}
-			_, _ = file_Vraster_LN.WriteString("\n")
+			_, _ = file_vRaster_LN.WriteString("\n")
 		}
 		// ...
 		if if_synaRaster_plot > 0 {
@@ -2039,24 +1984,24 @@ func write_plot_files_LN(cur_ms int64) { // update the data that are need to wri
 	}
 }
 
-func write_Vfluct_files(cur_ms int64) { // synchronized with V_xN and stim_xN
+func write_vFluct_files(cur_ms int64) { // synchronized with V_xN and stim_xN
 	var id, plotStep int64
 	defer Exit(Enter("$FN(%v)", cur_ms))
 	for plotStep = int64(math.Max(0.0, float64(cur_ms-ms_per_frame))); plotStep < cur_ms; plotStep += 1 {
-		if if_Vfluct_plot > 0 && if_PN_plot > 0 {
+		if if_vFluct_plot > 0 && if_PN_plot > 0 {
 			id = plot_fluct_PN_id
-			_, _ = file_Vfluct_PN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
-			_, _ = file_Vfluct_PN.WriteString("  ")
-			_, _ = file_Vfluct_PN.Write([]byte(strconv.FormatFloat(PN_V_list[plotStep][id], 'f', 15, 64)))
-			_, _ = file_Vfluct_PN.WriteString("\n")
+			_, _ = file_vFluct_PN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
+			_, _ = file_vFluct_PN.WriteString("  ")
+			_, _ = file_vFluct_PN.Write([]byte(strconv.FormatFloat(PN_V_list[plotStep][id], 'f', 15, 64)))
+			_, _ = file_vFluct_PN.WriteString("\n")
 		}
 		// write both stim and v files...
-		if if_Vfluct_plot > 0 && if_LN_plot > 0 {
+		if if_vFluct_plot > 0 && if_LN_plot > 0 {
 			id = plot_fluct_LN_id
-			_, _ = file_Vfluct_LN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
-			_, _ = file_Vfluct_LN.WriteString("  ")
-			_, _ = file_Vfluct_LN.Write([]byte(strconv.FormatFloat(LN_V_list[plotStep][id], 'f', 15, 64)))
-			_, _ = file_Vfluct_LN.WriteString("\n")
+			_, _ = file_vFluct_LN.Write([]byte(strconv.FormatFloat(float64(plotStep), 'f', 15, 64)))
+			_, _ = file_vFluct_LN.WriteString("  ")
+			_, _ = file_vFluct_LN.Write([]byte(strconv.FormatFloat(LN_V_list[plotStep][id], 'f', 15, 64)))
+			_, _ = file_vFluct_LN.WriteString("\n")
 		}
 	}
 }
@@ -2128,7 +2073,7 @@ func proc_plot_files(click int64) {
 	open_plot_files()
 	write_plot_files_PN(click)   // write all the points that need to be redrawed
 	write_plot_files_LN(click)   // write all the points that need to be redrawed
-	write_Vfluct_files(click)    // write all the points that need to be redrawed
+	write_vFluct_files(click)    // write all the points that need to be redrawed
 	write_stimFluct_files(click) // write all the points that need to be redrawed
 	write_synaFluct_files(click) // write all the points that need to be redrawed
 	close_plot_files()
@@ -2147,14 +2092,14 @@ func do_plot(cur_ms int64) {
 		}
 	}
 	// ...
-	if if_Vraster_plot > 0 {
+	if if_vRaster_plot > 0 {
 		if if_PN_plot > 0 {
-			plot_Vraster_PN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
-			plot_Vraster_PN.CheckedCmd("splot \"%v\" u 1:2:3 w p ps 0.5 pt 7 palette notitle", filename_Vraster_PN)
+			plot_vRaster_PN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
+			plot_vRaster_PN.CheckedCmd("splot \"%v\" u 1:2:3 w p ps 0.5 pt 7 palette notitle", filename_vRaster_PN)
 		}
 		if if_LN_plot > 0 {
-			plot_Vraster_LN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
-			plot_Vraster_LN.CheckedCmd("splot \"%v\" u 1:2:3 w p ps 0.5 pt 7 palette notitle", filename_Vraster_LN)
+			plot_vRaster_LN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
+			plot_vRaster_LN.CheckedCmd("splot \"%v\" u 1:2:3 w p ps 0.5 pt 7 palette notitle", filename_vRaster_LN)
 		}
 	}
 	// ...
@@ -2175,14 +2120,14 @@ func do_plot(cur_ms int64) {
 		}
 	}
 	// ...
-	if if_Vfluct_plot > 0 {
+	if if_vFluct_plot > 0 {
 		if if_PN_plot > 0 {
-			plot_Vfluct_PN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
-			plot_Vfluct_PN.CheckedCmd("plot \"%v\" w l notitle", filename_Vfluct_PN)
+			plot_vFluct_PN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
+			plot_vFluct_PN.CheckedCmd("plot \"%v\" w l notitle", filename_vFluct_PN)
 		}
 		if if_LN_plot > 0 {
-			plot_Vfluct_LN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
-			plot_Vfluct_LN.CheckedCmd("plot \"%v\" w l notitle", filename_Vfluct_LN)
+			plot_vFluct_LN.CheckedCmd("set xrange [%v:%v]", cur_ms-ms_per_frame, cur_ms)
+			plot_vFluct_LN.CheckedCmd("plot \"%v\" w l notitle", filename_vFluct_LN)
 		}
 	}
 	// ...
@@ -2466,9 +2411,9 @@ func disp_para() {
 	fmt.Println("if_PN_plot ", if_PN_plot)
 	fmt.Println("if_LN_plot ", if_LN_plot)
 	fmt.Println("if_stimRaster_plot ", if_stimRaster_plot)
-	fmt.Println("if_Vraster_plot ", if_Vraster_plot)
+	fmt.Println("if_vRaster_plot ", if_vRaster_plot)
 	fmt.Println("if_synaRaster_plot ", if_synaRaster_plot)
-	fmt.Println("if_Vfluct_plot ", if_Vfluct_plot)
+	fmt.Println("if_vFluct_plot ", if_vFluct_plot)
 	fmt.Println("if_stimFluct_plot ", if_stimFluct_plot)
 	fmt.Println("if_synaFluct_plot ", if_synaFluct_plot)
 	fmt.Println()
@@ -2482,28 +2427,27 @@ func disp_spike_freq() {
 	LN_spike_freq_file, err = os.OpenFile(LN_spike_freq_filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
 	// ...
+	fmt.Println("\nSpiking rates (spikes per second) of each neuron in the whole trial period:")
 	for i = 0; i < PN_number; i++ {
 		fmt.Printf("\t\tPN_spike_freq[%03d] \t %.1f\n", i, PN_spike_freq[i])
 		_, _ = PN_spike_freq_file.Write([]byte(strconv.FormatInt(i, 10)))
-		_, _ = PN_spike_freq_file.WriteString(" ")
+		_, _ = PN_spike_freq_file.WriteString("   ")
 		_, _ = PN_spike_freq_file.Write([]byte(strconv.FormatFloat(PN_spike_freq[i], 'f', 6, 64)))
 		_, _ = PN_spike_freq_file.WriteString("\n")
 	}
-	fmt.Println()
 	// ...
+	fmt.Println()
 	for i = 0; i < LN_number; i++ {
 		fmt.Printf("\t\tLN_spike_freq[%03d] \t %.1f\n", i, LN_spike_freq[i])
-		_, _ = PN_spike_freq_file.Write([]byte(strconv.FormatInt(i, 10)))
 		_, _ = LN_spike_freq_file.Write([]byte(strconv.FormatInt(i, 10)))
-		_, _ = LN_spike_freq_file.WriteString(" ")
+		_, _ = LN_spike_freq_file.WriteString("   ")
 		_, _ = LN_spike_freq_file.Write([]byte(strconv.FormatFloat(LN_spike_freq[i], 'f', 6, 64)))
 		_, _ = LN_spike_freq_file.WriteString("\n")
 	}
-	fmt.Println()
 	// ...
 	PN_spike_freq_file.Close()
 	LN_spike_freq_file.Close()
-	fmt.Println("spiking rates saved to files.")
+	fmt.Println("Spiking rates saved to files.")
 }
 
 func init_odor() {
@@ -2637,7 +2581,6 @@ func main() {
 		dest_plot()
 	}
 	disp_spike_freq() // disp_spike_freq() should be in ahead of disp_presync_num()!!!
-	disp_presync_num()
 	save_docs()
 	//...
 	fmt.Println("\nDone...")
