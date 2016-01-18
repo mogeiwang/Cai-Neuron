@@ -148,6 +148,9 @@ package main
 // B 3.1 update:
 // a) do NOT print spike number of presynaptic neuron & postsynapric neuron any more
 // b) thresholds etc. defined as consts
+// B 3.1.1 update:
+// a) introduce var freq_scoping to control the calculation range
+// b) clean period_len - time_end related codes in get_stim_...()
 
 import (
 	"encoding/csv"
@@ -173,6 +176,7 @@ const (
 	if_runtime_trace = 0
 	plot_fluct_PN_id = 0 // which PN fluction to plot?
 	plot_fluct_LN_id = 0
+	freq_scoping     = "stimulated" // noStim, rising, stimulated, decay, noStim
 	// ...
 	ms_per_second int64 = 1000               // 1000 ms = 1 S
 	time_end      int64 = 10 * ms_per_second // run how many ms; always start from 0! !!!
@@ -825,6 +829,7 @@ func save_matrix() {
 }
 
 func forward_states_PN(id int64) {
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % period_len)
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= PN_number {
 		return
@@ -840,13 +845,22 @@ func forward_states_PN(id int64) {
 	// ...
 	if PN_reactor[id][0].V <= V_threshold_PN && PN_reactor[id][1].V > V_threshold_PN {
 		PN_reactor[id][1].lastSpike = CLOCK
-		PN_spike_freq[id] += float64(ms_per_second) / float64(time_end) // plus 1 in the form freq in S
+		if freq_scoping == "noStim" && (clock < stim_onset || clock >= (stim_offset+stim_decay)) {
+			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_onset+float64(period_len)-stim_offset-stim_decay)
+		} else if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
+			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
+		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
+			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_offset-stim_onset-stim_rise) // plus 1 in the form freq in S
+		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
+			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+		}
 	} else {
 		PN_reactor[id][1].lastSpike = PN_reactor[id][0].lastSpike
 	}
 }
 
 func forward_states_LN(id int64) {
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % period_len)
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= LN_number {
 		return
@@ -865,7 +879,15 @@ func forward_states_LN(id int64) {
 	// ...
 	if LN_reactor[id][0].V <= V_threshold_LN && LN_reactor[id][1].V > V_threshold_LN { // is this set properly?
 		LN_reactor[id][1].lastSpike = CLOCK
-		LN_spike_freq[id] += float64(ms_per_second) / float64(time_end) // plus 1 in the form freq in S
+		if freq_scoping == "noStim" && (clock < stim_onset || clock >= (stim_offset+stim_decay)) {
+			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_onset+float64(period_len)-stim_offset-stim_decay)
+		} else if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
+			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
+		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
+			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_offset-stim_onset-stim_rise) // plus 1 in the form freq in S
+		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
+			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+		}
 	} else { // reveised after [try]
 		LN_reactor[id][1].lastSpike = LN_reactor[id][0].lastSpike
 	}
@@ -937,9 +959,7 @@ func get_stim_PN(id int64) {
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
 		//inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
 		inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
-	} else if clock >= (stim_offset+stim_decay) && clock < float64(time_end) { // after decay
-		inputRate = 0
-	} else { // after decay
+	} else if clock >= (stim_offset + stim_decay) { // after decay
 		inputRate = 0
 	}
 	if odor_PN_set.Contains(id) {
@@ -952,7 +972,7 @@ func get_stim_PN(id int64) {
 	PN_reactor[id][1].stim = ret
 	// ...
 	if if_random_stim > 0 {
-		return
+		return // Poisson stimulus or steady stimulus
 	} else if clock < stim_onset {
 		PN_reactor[id][1].stim = PN_stim_baseline
 	} else if clock >= stim_onset && clock < (stim_onset+stim_rise) { // rising stimulus
@@ -961,9 +981,7 @@ func get_stim_PN(id int64) {
 		PN_reactor[id][1].stim = PN_stim_plusORNs
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
 		PN_reactor[id][1].stim = PN_stim_baseline + ((stim_offset+stim_decay-clock)/stim_decay)*(PN_stim_plusORNs-PN_stim_baseline)
-	} else if clock >= (stim_offset+stim_decay) && clock < float64(time_end) { // after decay
-		PN_reactor[id][1].stim = PN_stim_baseline
-	} else { // after decay
+	} else if clock >= (stim_offset + stim_decay) { // after decay
 		PN_reactor[id][1].stim = PN_stim_baseline
 	}
 }
@@ -990,9 +1008,7 @@ func get_stim_LN(id int64) {
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
 		//inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
 		inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
-	} else if clock >= (stim_offset+stim_decay) && clock < float64(time_end) { // after decay
-		inputRate = 0
-	} else { // after decay
+	} else if clock >= (stim_offset + stim_decay) { // after decay
 		inputRate = 0
 	}
 	if odor_LN_set.Contains(id) {
@@ -1005,7 +1021,7 @@ func get_stim_LN(id int64) {
 	LN_reactor[id][1].stim = ret
 	// ...
 	if if_random_stim > 0 {
-		return
+		return // Poisson stimulus or steady stimulus
 	} else if clock < stim_onset {
 		LN_reactor[id][1].stim = LN_stim_baseline
 	} else if clock >= stim_onset && clock < (stim_onset+stim_rise) { // rising stimulus
@@ -1014,9 +1030,7 @@ func get_stim_LN(id int64) {
 		LN_reactor[id][1].stim = LN_stim_plusORNs
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
 		LN_reactor[id][1].stim = LN_stim_baseline + ((stim_offset+stim_decay-clock)/stim_decay)*(LN_stim_plusORNs-LN_stim_baseline)
-	} else if clock >= (stim_offset+stim_decay) && clock < float64(time_end) { // after decay
-		LN_reactor[id][1].stim = LN_stim_baseline
-	} else { // after decay
+	} else if clock >= (stim_offset + stim_decay) { // after decay
 		LN_reactor[id][1].stim = LN_stim_baseline
 	}
 }
@@ -1117,7 +1131,7 @@ func exist_file(filename string) bool {
 }
 
 var (
-	ms_per_frame int64 = 750 // millisecond per frame
+	ms_per_frame int64 = 750 // millisecond per gnuplot frame
 	// ...
 	filename_config             string = "config.yaml"
 	filename_vRaster_PN         string = strings.Join([]string{plot_file_dir, "plot_vRaster_PN.txt"}, "")    // will be added an appendix
@@ -1744,7 +1758,6 @@ func init_synaFluct_plot() {
 
 func init_plot() {
 	defer Exit(Enter("$FN()"))
-	// ...
 	init_stimRaster_plot()
 	init_vRaster_plot()
 	init_synaRaster_plot()
@@ -2427,7 +2440,7 @@ func disp_spike_freq() {
 	LN_spike_freq_file, err = os.OpenFile(LN_spike_freq_filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check(err)
 	// ...
-	fmt.Println("\nSpiking rates (spikes per second) of each neuron in the whole trial period:")
+	fmt.Println("\nSpiking rates (spikes per second) of each neuron <<", freq_scoping)
 	for i = 0; i < PN_number; i++ {
 		fmt.Printf("\t\tPN_spike_freq[%03d] \t %.1f\n", i, PN_spike_freq[i])
 		_, _ = PN_spike_freq_file.Write([]byte(strconv.FormatInt(i, 10)))
@@ -2551,8 +2564,7 @@ func main() {
 		init_plot()
 	}
 	//...
-	fmt.Println()
-	fmt.Println("Exec...")
+	fmt.Println("\nExec...")
 	for click = 1; click <= click_num_total; click++ { // each time step is 0.01 ms
 		//...
 		if (click-1)%10000 == 9999 { // 0.1s
