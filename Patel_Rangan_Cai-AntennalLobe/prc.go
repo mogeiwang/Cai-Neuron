@@ -151,6 +151,8 @@ package main
 // B 3.1.1 update:
 // a) introduce var freq_scoping to control the calculation range
 // b) clean period_len - time_end related codes in get_stim_...()
+// B 3.1.2 update:
+// a) auto-update coupling rates when neuron_num_coefs is changed.
 
 import (
 	"encoding/csv"
@@ -172,7 +174,7 @@ import (
 const (
 	neuron_num_coefs = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix = 0 // readin matrix or randomly set?
-	if_init_rt_plots = 1 // >0 init gnuolot, <0 do not init.
+	if_init_rt_plots = 1 // >0 init gnuplot, <=0 do not init.
 	if_runtime_trace = 0
 	plot_fluct_PN_id = 0 // which PN fluction to plot?
 	plot_fluct_LN_id = 0
@@ -224,11 +226,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.15 // 0.15
-	LN2PN_GABA_prob float64 = 0.15 // 0.15
-	LN2LN_GABA_prob float64 = 0.25 // 0.25
-	PN2PN_nACH_prob float64 = 0.10 // 0.10
-	PN2LN_nACH_prob float64 = 0.10 // 0.10
+	LN2PN_slow_prob float64 = 0.15 / neuron_num_coefs
+	LN2PN_GABA_prob float64 = 0.15 / neuron_num_coefs
+	LN2LN_GABA_prob float64 = 0.25 / neuron_num_coefs
+	PN2PN_nACH_prob float64 = 0.10 / neuron_num_coefs
+	PN2LN_nACH_prob float64 = 0.10 / neuron_num_coefs
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
