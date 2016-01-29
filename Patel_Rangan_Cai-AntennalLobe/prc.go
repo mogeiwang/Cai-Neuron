@@ -13,7 +13,7 @@ package main
 // a) init_matrix has its own rand.Seed now
 // b) xN_V_list, xN_stim_list sampling rate reset to 1item per ms
 // c) add running watch stop settings which can be set in yaml file
-//        if_running >0 run, <0 pause
+//        if_running >0 run, <=0 pause
 // d) if realtime plot or not can be set in yaml file
 //        if_realtime_plot >0 run, <0 pause
 // A 1.0.2 update:
@@ -155,6 +155,8 @@ package main
 // a) auto-update coupling rates when neuron_num_coefs is changed.
 // B 3.1.3 update:
 // a) change to smaller stimulus PN, LN sets (3 or more PN, 1 or more LN)
+// B 3.2 update:
+// a) add transition process before stim onset, and use more random init states
 
 import (
 	"encoding/csv"
@@ -183,15 +185,16 @@ const (
 	freq_scoping     = "stimulated" // noStim, rising, stimulated, decay, noStim
 	// ...
 	ms_per_second int64 = 1000               // 1000 ms = 1 S
-	time_end      int64 = 10 * ms_per_second // run how many ms; always start from 0! !!!
+	time_begin    int64 = 10 * ms_per_second // length of transition process.
+	time_end      int64 = 10 * ms_per_second // run how many ms!!! start from 0.
 	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
 	PN_number     int64 = 90 * neuron_num_coefs
 	LN_number     int64 = 30 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
-	stim_rise   float64 = 0.05 * float64(time_end) // 0.05 rise time of stimulus input onset (1.5-2)
 	stim_offset float64 = 0.40 * float64(time_end) // 0.40 withdraw stimulus at this moment (time in ms)
+	stim_rise   float64 = 0.05 * float64(time_end) // 0.05 rise time of stimulus input onset (1.5-2)
 	stim_decay  float64 = 0.20 * float64(time_end) // 0.20 decay time (Inf) of stimulus input offset (4.0-6)
 	// ...
 	use_exist_config bool    = true                        // read the config file [or rewrite it]?
@@ -232,7 +235,7 @@ var (
 	PN2PN_nACH_prob float64 = 0.10 / neuron_num_coefs
 	PN2LN_nACH_prob float64 = 0.10 / neuron_num_coefs
 	// if run, if plot...
-	if_running          int64 = 1 // >0 set to run , <0 set to pause.
+	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
 	if_random_stim      int64 = 1 // possion input? or stable ones?
 	if_realtime_plot    int64 = 1 // >0 set to plot, <0 set to pause.
@@ -245,8 +248,8 @@ var (
 	if_stimFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
-	stim_PN_num           int64   = 3 * int64(math.Max(1.0, neuron_num_coefs)) // how many PNs will receive stimulus
-	stim_LN_num           int64   = 1 * int64(math.Max(1.0, neuron_num_coefs))
+	stim_PN_num           int64   = int64(9 * neuron_num_coefs) // how many PNs will receive stimulus
+	stim_LN_num           int64   = int64(3 * neuron_num_coefs)
 	BG_input_rate         float64 = 3.50000 // 3.4711...
 	ORN_input_rate        float64 = 0.03500 // 0.0357
 	BG_input_strength_PN  float64 = 0.06540
@@ -2181,23 +2184,23 @@ func init_neuron() {
 	var id int64
 	defer Exit(Enter("$FN()"))
 	for id = 0; id < PN_number; id++ {
-		PN_reactor[id][0].V = V_rest_PN + 10*rand.Float64() - 5.0
-		PN_reactor[id][0].stim = -1.5
-		PN_reactor[id][0].h_K = 1
-		PN_reactor[id][0].h_Na = 1
-		PN_reactor[id][0].h_A = 1
-		PN_reactor[id][0].lastSpike = -10
+		PN_reactor[id][0].V = V_rest_PN * rand.Float64()
+		PN_reactor[id][0].stim = -1.5 * rand.Float64()
+		PN_reactor[id][0].h_K = 1 * rand.Float64()
+		PN_reactor[id][0].h_Na = 1 * rand.Float64()
+		PN_reactor[id][0].h_A = 1 * rand.Float64()
+		PN_reactor[id][0].lastSpike = -10 * rand.Float64()
 		PN_V_list[0][id] = PN_reactor[id][0].V
 		PN_stim_list[0][id] = PN_reactor[id][0].stim
 	} // end for PN
 	for id = 0; id < LN_number; id++ {
-		LN_reactor[id][0].V = V_rest_LN + 10*rand.Float64() - 5.0
-		LN_reactor[id][0].stim = -0.05
-		LN_reactor[id][0].h_K = 1
-		LN_reactor[id][0].h_Ca = 1
-		LN_reactor[id][0].h_B = 1
+		LN_reactor[id][0].V = V_rest_LN * rand.Float64()
+		LN_reactor[id][0].stim = -0.05 * rand.Float64()
+		LN_reactor[id][0].h_K = 1 * rand.Float64()
+		LN_reactor[id][0].h_Ca = 1 * rand.Float64()
+		LN_reactor[id][0].h_B = 1 * rand.Float64()
 		LN_reactor[id][0].R_slow = 0.3 * rand.Float64()
-		LN_reactor[id][0].lastSpike = -10
+		LN_reactor[id][0].lastSpike = -10 * rand.Float64()
 		LN_V_list[0][id] = LN_reactor[id][0].V
 		LN_stim_list[0][id] = LN_reactor[id][0].stim
 	} // end for LN
@@ -2402,6 +2405,7 @@ func disp_para() {
 	fmt.Println("ORN_input_strength_LN ", ORN_input_strength_LN)
 	fmt.Println()
 	// ...
+	fmt.Println("time_begin ", time_begin/ms_per_second)
 	fmt.Println("time_end ", time_end/ms_per_second)
 	fmt.Println("click_per_ms ", click_per_ms)
 	fmt.Println("V_rest_PN ", V_rest_PN)
@@ -2421,7 +2425,6 @@ func disp_para() {
 	fmt.Println("use_exist_config ", use_exist_config)
 	fmt.Println("plot_file_dir ", plot_file_dir)
 	fmt.Println("save_file_dir ", save_file_dir)
-	fmt.Println("if_running ", if_running)
 	fmt.Println("if_random_stim ", if_random_stim)
 	fmt.Println("if_init_rt_plots ", if_init_rt_plots)
 	fmt.Println("if_realtime_plot ", if_realtime_plot)
@@ -2530,7 +2533,7 @@ func proc_args() {
 }
 
 func main() {
-	var click int64
+	var click, tmpClick int64
 	var yaml_obj map[interface{}]interface{}
 	var flagCpuprofile string
 	var cpuProf_file *os.File
@@ -2560,7 +2563,6 @@ func main() {
 	scale_synapse_currents()
 	remove_coupling_matrix()
 	disp_para()
-	//...
 	fmt.Println("--- setup")
 	init_neuron()
 	proc_filenames()
@@ -2569,8 +2571,22 @@ func main() {
 	}
 	//...
 	fmt.Println("\nExec...")
-	for click = 1; click <= click_num_total; click++ { // each time step is 0.01 ms
+	fmt.Print("--- trans") // transition process...
+	CLOCK = -1.0 * float64(time_begin)
+	for tmpClick = 1; tmpClick <= click_per_ms*time_begin; tmpClick++ {
+		if (tmpClick-1)%10000 == 9999 { // 0.1s
+			yaml_obj = decode_yaml(yaml_obj) // reread in the configuration parameters
+			proc_para(yaml_obj)
+			fmt.Print("  ", float64(tmpClick)/100000.0)
+		}
 		//...
+		CLOCK = CLOCK + time_stepLen
+		take_iteration(tmpClick) // move a step forward
+	}
+	//...
+	fmt.Print("\n--- main!")
+	CLOCK = 0
+	for click = 1; click <= click_num_total; click++ { // each time step is 0.01 ms
 		if (click-1)%10000 == 9999 { // 0.1s
 			yaml_obj = decode_yaml(yaml_obj) // reread in the configuration parameters
 			proc_para(yaml_obj)
@@ -2585,7 +2601,7 @@ func main() {
 			do_plot(click / 100)         // this is the main function for plotings
 		}
 		//...
-		if if_running <= 0 { // paused by user
+		for if_running <= 0 { // paused by user
 			yaml_obj = decode_yaml(yaml_obj)
 			proc_para(yaml_obj) // read in the configuration parameters
 			time.Sleep(10 * time.Millisecond)
