@@ -153,6 +153,8 @@ package main
 // b) clean period_len - time_end related codes in get_stim_...()
 // B 3.1.2 update:
 // a) auto-update coupling rates when neuron_num_coefs is changed.
+// B 3.1.3 update:
+// a) change to smaller stimulus PN, LN sets (3 or more PN, 1 or more LN)
 
 import (
 	"encoding/csv"
@@ -185,8 +187,6 @@ const (
 	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
 	PN_number     int64 = 90 * neuron_num_coefs
 	LN_number     int64 = 30 * neuron_num_coefs
-	stim_PN_num   int64 = 30 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 10 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
@@ -245,6 +245,8 @@ var (
 	if_stimFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
+	stim_PN_num           int64   = 3 * int64(math.Max(1.0, neuron_num_coefs)) // how many PNs will receive stimulus
+	stim_LN_num           int64   = 1 * int64(math.Max(1.0, neuron_num_coefs))
 	BG_input_rate         float64 = 3.50000 // 3.4711...
 	ORN_input_rate        float64 = 0.03500 // 0.0357
 	BG_input_strength_PN  float64 = 0.06540
