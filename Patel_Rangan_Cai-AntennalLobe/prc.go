@@ -157,6 +157,8 @@ package main
 // a) change to smaller stimulus PN, LN sets (3 or more PN, 1 or more LN)
 // B 3.2 update:
 // a) add transition process before stim onset, and use more random init states
+// B 3.2.1 update:
+// a) change default neuron numbers, and do other minor fix.
 
 import (
 	"encoding/csv"
@@ -176,20 +178,22 @@ import (
 )
 
 const (
-	neuron_num_coefs = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
-	if_readin_matrix = 0 // readin matrix or randomly set?
-	if_init_rt_plots = 1 // >0 init gnuplot, <=0 do not init.
+	neuron_num_coefs = 10 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
+	if_readin_matrix = 0  // readin matrix or randomly set?
+	if_init_rt_plots = 1  // >0 init gnuplot, <=0 do not init.
 	if_runtime_trace = 0
 	plot_fluct_PN_id = 0 // which PN fluction to plot?
 	plot_fluct_LN_id = 0
 	freq_scoping     = "stimulated" // noStim, rising, stimulated, decay, noStim
 	// ...
 	ms_per_second int64 = 1000               // 1000 ms = 1 S
-	time_begin    int64 = 10 * ms_per_second // length of transition process.
+	time_begin    int64 = 5 * ms_per_second  // length of transition process before 0.
 	time_end      int64 = 10 * ms_per_second // run how many ms!!! start from 0.
 	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
 	PN_number     int64 = 90 * neuron_num_coefs
 	LN_number     int64 = 30 * neuron_num_coefs
+	stim_PN_num   int64 = 9 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 3 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
@@ -248,8 +252,6 @@ var (
 	if_stimFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
-	stim_PN_num           int64   = int64(9 * neuron_num_coefs) // how many PNs will receive stimulus
-	stim_LN_num           int64   = int64(3 * neuron_num_coefs)
 	BG_input_rate         float64 = 3.50000 // 3.4711...
 	ORN_input_rate        float64 = 0.03500 // 0.0357
 	BG_input_strength_PN  float64 = 0.06540
@@ -2563,6 +2565,7 @@ func main() {
 	scale_synapse_currents()
 	remove_coupling_matrix()
 	disp_para()
+	//...
 	fmt.Println("--- setup")
 	init_neuron()
 	proc_filenames()
@@ -2587,6 +2590,7 @@ func main() {
 	fmt.Print("\n--- main!")
 	CLOCK = 0
 	for click = 1; click <= click_num_total; click++ { // each time step is 0.01 ms
+		//...
 		if (click-1)%10000 == 9999 { // 0.1s
 			yaml_obj = decode_yaml(yaml_obj) // reread in the configuration parameters
 			proc_para(yaml_obj)
