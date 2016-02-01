@@ -192,8 +192,8 @@ const (
 	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
 	PN_number     int64 = 90 * neuron_num_coefs
 	LN_number     int64 = 30 * neuron_num_coefs
-	stim_PN_num   int64 = 9 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 3 * neuron_num_coefs
+	stim_PN_num   int64 = 30 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 10 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
