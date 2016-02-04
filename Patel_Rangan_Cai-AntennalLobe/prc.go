@@ -178,9 +178,9 @@ import (
 )
 
 const (
-	neuron_num_coefs = 10 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
-	if_readin_matrix = 0  // readin matrix or randomly set?
-	if_init_rt_plots = 1  // >0 init gnuplot, <=0 do not init.
+	neuron_num_coefs = 5 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
+	if_readin_matrix = 0 // readin matrix or randomly set?
+	if_init_rt_plots = 1 // >0 init gnuplot, <=0 do not init.
 	if_runtime_trace = 0
 	plot_fluct_PN_id = 0 // which PN fluction to plot?
 	plot_fluct_LN_id = 0
