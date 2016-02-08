@@ -178,7 +178,7 @@ import (
 )
 
 const (
-	neuron_num_coefs = 5 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
+	neuron_num_coefs = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix = 0 // readin matrix or randomly set?
 	if_init_rt_plots = 1 // >0 init gnuplot, <=0 do not init.
 	if_runtime_trace = 0
@@ -190,10 +190,10 @@ const (
 	time_begin    int64 = 5 * ms_per_second  // length of transition process before 0.
 	time_end      int64 = 10 * ms_per_second // run how many ms!!! start from 0.
 	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
-	PN_number     int64 = 90 * neuron_num_coefs
-	LN_number     int64 = 30 * neuron_num_coefs
-	stim_PN_num   int64 = 30 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 10 * neuron_num_coefs
+	PN_number     int64 = 250 * neuron_num_coefs
+	LN_number     int64 = 90 * neuron_num_coefs
+	stim_PN_num   int64 = 100 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 30 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
@@ -233,11 +233,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.15 / neuron_num_coefs
-	LN2PN_GABA_prob float64 = 0.15 / neuron_num_coefs
-	LN2LN_GABA_prob float64 = 0.25 / neuron_num_coefs
-	PN2PN_nACH_prob float64 = 0.10 / neuron_num_coefs
-	PN2LN_nACH_prob float64 = 0.10 / neuron_num_coefs
+	LN2PN_slow_prob float64 = 0.050000 / neuron_num_coefs
+	LN2PN_GABA_prob float64 = 0.050000 / neuron_num_coefs
+	LN2LN_GABA_prob float64 = 0.083333 / neuron_num_coefs
+	PN2PN_nACH_prob float64 = 0.033333 / neuron_num_coefs
+	PN2LN_nACH_prob float64 = 0.033333 / neuron_num_coefs
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
