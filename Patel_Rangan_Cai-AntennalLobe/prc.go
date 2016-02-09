@@ -233,11 +233,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.050000 / neuron_num_coefs
-	LN2PN_GABA_prob float64 = 0.050000 / neuron_num_coefs
-	LN2LN_GABA_prob float64 = 0.083333 / neuron_num_coefs
-	PN2PN_nACH_prob float64 = 0.033333 / neuron_num_coefs
-	PN2LN_nACH_prob float64 = 0.033333 / neuron_num_coefs
+	LN2PN_slow_prob float64 = 0.050 / neuron_num_coefs
+	LN2PN_GABA_prob float64 = 0.050 / neuron_num_coefs
+	LN2LN_GABA_prob float64 = 0.084 / neuron_num_coefs
+	PN2PN_nACH_prob float64 = 0.036 / neuron_num_coefs
+	PN2LN_nACH_prob float64 = 0.036 / neuron_num_coefs
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
