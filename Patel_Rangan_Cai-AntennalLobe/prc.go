@@ -1746,7 +1746,7 @@ func init_synaFluct_plot() {
 	plot_synaFluct_GABA_LN.CheckedCmd("set title \" GABA Synapse Current (uA) fluction from LNs to given LN \"")
 	plot_synaFluct_GABA_LN.SetXLabel("Current Time (ms)")
 	plot_synaFluct_GABA_LN.SetYLabel("Voltage (uA)")
-	plot_synaFluct_GABA_LN.CheckedCmd("set yrange [-0.1:2]")
+	plot_synaFluct_GABA_LN.CheckedCmd("set yrange [-0.1:10]")
 	// ...
 	plot_synaFluct_nACH_PN.CheckedCmd("reset")
 	plot_synaFluct_nACH_PN.CheckedCmd("set term gif size 800,400 delay 100")
