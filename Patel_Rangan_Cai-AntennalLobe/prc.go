@@ -1197,7 +1197,7 @@ var (
 	doc_slow_PN              *os.File
 	doc_GABA_PN, doc_GABA_LN *os.File
 	doc_nACH_PN, doc_nACH_LN *os.File
-	docname_slow_PN          string = strings.Join([]string{save_file_dir, "doc_stim_PN.txt"}, "")
+	docname_slow_PN          string = strings.Join([]string{save_file_dir, "doc_slow_PN.txt"}, "")
 	docname_GABA_PN          string = strings.Join([]string{save_file_dir, "doc_GABA_PN.txt"}, "")
 	docname_GABA_LN          string = strings.Join([]string{save_file_dir, "doc_GABA_LN.txt"}, "")
 	docname_nACH_PN          string = strings.Join([]string{save_file_dir, "doc_nACH_PN.txt"}, "")
