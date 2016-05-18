@@ -159,6 +159,8 @@ package main
 // a) add transition process before stim onset, and use more random init states
 // B 3.2.1 update:
 // a) change default neuron numbers, and do other minor fix.
+// B 4.0 update:
+// a) read adjacency list, in additional to the previous csv reading.
 
 import (
 	"encoding/csv"
@@ -178,13 +180,14 @@ import (
 )
 
 const (
-	neuron_num_coefs = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
-	if_readin_matrix = 0 // readin matrix or randomly set?
-	if_init_rt_plots = 1 // >0 init gnuplot, <=0 do not init.
-	if_runtime_trace = 0
-	plot_fluct_PN_id = 0 // which PN fluction to plot?
-	plot_fluct_LN_id = 0
-	freq_scoping     = "stimulated" // noStim, rising, stimulated, decay, noStim
+	neuron_num_coefs     = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
+	if_readin_matrix     = 0 // readin matrix, or randomly set?
+	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
+	if_init_rt_plots     = 1 // >0 init gnuplot, <=0 do not init.
+	if_runtime_trace     = 0
+	plot_fluct_PN_id     = 0 // which PN fluction to plot?
+	plot_fluct_LN_id     = 0
+	freq_scoping         = "stimulated" // noStim, rising, stimulated, decay, noStim
 	// ...
 	ms_per_second int64 = 1000               // 1000 ms = 1 S
 	time_begin    int64 = 5 * ms_per_second  // length of transition process before 0.
@@ -574,16 +577,248 @@ var (
 	PN2LN_nACH_mat [PN_number][LN_number]float64    // coupling matrix
 )
 
-func readin_matrix() {
+func proc_adjl_pp(inp string) []int {
+	var ppIDs []int
+	defer Exit(Enter("$FN()"))
+	// ... pp is prev or post :-)
+	pp := strings.Split(inp, "~")
+	// ...
+	if len(pp) < 1 {
+		fmt.Println("Error in reading adj list! too few node IDs are provided")
+		ppIDs = make([]int, 0)
+	} else if len(pp) == 1 {
+		// a single node id is provided.
+		id, err := strconv.Atoi(strings.TrimSpace(pp[0]))
+		check_err(err)
+		ppIDs = make([]int, 1)
+		ppIDs[0] = id
+	} else if len(pp) == 2 {
+		// a nodes ids list is provided.
+		id0, err := strconv.Atoi(strings.TrimSpace(pp[0]))
+		check_err(err)
+		id1, err := strconv.Atoi(strings.TrimSpace(pp[1]))
+		check_err(err)
+		// ...
+		if id1 < id0 {
+			fmt.Print("Error in reading adj list! Find a reversed range!")
+			ppIDs = make([]int, 0)
+		} else {
+			ppIDs = make([]int, id1-id0+1)
+			for k := id0; k <= id1; k++ {
+				ppIDs[k-id0] = k
+			}
+		}
+	} else if len(pp) > 2 {
+		fmt.Println("Error in reading adj list! too many node IDs are provided")
+		ppIDs = make([]int, 0)
+	}
+	return ppIDs
+}
+
+func readin_adjl_LN2PN_slow() {
+	data, err := ioutil.ReadFile(LN2PN_slow_adjlName)
+	check_err(err)
+	defer Exit(Enter("$FN()"))
+	// ...
+	pps := strings.Split(string(data), "\n") // Pre- and Post- Synaptic
+	for i := range pps {
+		fmt.Println(i, " : ", pps[i])
+		if len(pps[i]) <= 0 {
+			continue
+		} else if pps[i][0] == '#' {
+			continue
+		} else if pps[i][0] == '=' {
+			continue
+		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
+			pp := strings.Split(pps[i], ":") // pp: pre or post
+			prevIDs := proc_adjl_pp(pp[0])
+			postIDs := proc_adjl_pp(pp[1])
+			for _, x := range prevIDs {
+				for _, y := range postIDs {
+					LN2PN_slow_mat[x][y] = 1
+				}
+			}
+		} else {
+			fmt.Println("Error in processing: ", LN2PN_slow_adjlName, "\t line: ", i, " !!!")
+			os.Exit(-1)
+		}
+	}
+}
+
+func readin_adjl_LN2PN_GABA() {
+	data, err := ioutil.ReadFile(LN2PN_GABA_adjlName)
+	check_err(err)
+	defer Exit(Enter("$FN()"))
+	// ...
+	pps := strings.Split(string(data), "\n")
+	for i := range pps {
+		fmt.Println(i, " : ", pps[i])
+		if len(pps[i]) <= 0 {
+			continue
+		} else if pps[i][0] == '#' {
+			continue
+		} else if pps[i][0] == '=' {
+			continue
+		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
+			pp := strings.Split(pps[i], ":")
+			prevIDs := proc_adjl_pp(pp[0])
+			postIDs := proc_adjl_pp(pp[1])
+			for _, x := range prevIDs {
+				for _, y := range postIDs {
+					LN2PN_GABA_mat[x][y] = 1
+				}
+			}
+		} else {
+			fmt.Println("Error in processing: ", LN2PN_GABA_adjlName, "\t line: ", i, " !!!")
+			os.Exit(-1)
+		}
+	}
+}
+
+func readin_adjl_LN2LN_GABA() {
+	data, err := ioutil.ReadFile(LN2LN_GABA_adjlName)
+	check_err(err)
+	defer Exit(Enter("$FN()"))
+	// ...
+	pps := strings.Split(string(data), "\n")
+	for i := range pps {
+		fmt.Println(i, " : ", pps[i])
+		if len(pps[i]) <= 0 {
+			continue
+		} else if pps[i][0] == '#' {
+			continue
+		} else if pps[i][0] == '=' {
+			continue
+		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
+			pp := strings.Split(pps[i], ":")
+			prevIDs := proc_adjl_pp(pp[0])
+			postIDs := proc_adjl_pp(pp[1])
+			for _, x := range prevIDs {
+				for _, y := range postIDs {
+					LN2LN_GABA_mat[x][y] = 1
+				}
+			}
+		} else {
+			fmt.Println("Error in processing: ", LN2LN_GABA_adjlName, "\t line: ", i, " !!!")
+			os.Exit(-1)
+		}
+	}
+}
+
+func readin_adjl_PN2PN_nACH() {
+	data, err := ioutil.ReadFile(PN2PN_nACH_adjlName)
+	check_err(err)
+	defer Exit(Enter("$FN()"))
+	// ...
+	pps := strings.Split(string(data), "\n")
+	for i := range pps {
+		fmt.Println(i, " : ", pps[i])
+		if len(pps[i]) <= 0 {
+			continue
+		} else if pps[i][0] == '#' {
+			continue
+		} else if pps[i][0] == '=' {
+			continue
+		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
+			pp := strings.Split(pps[i], ":")
+			prevIDs := proc_adjl_pp(pp[0])
+			postIDs := proc_adjl_pp(pp[1])
+			for _, x := range prevIDs {
+				for _, y := range postIDs {
+					PN2PN_nACH_mat[x][y] = 1
+				}
+			}
+		} else {
+			fmt.Println("Error in processing: ", PN2PN_nACH_adjlName, "\t line: ", i, " !!!")
+			os.Exit(-1)
+		}
+	}
+}
+
+func readin_adjl_PN2LN_nACH() {
+	data, err := ioutil.ReadFile(PN2LN_nACH_adjlName)
+	check_err(err)
+	defer Exit(Enter("$FN()"))
+	// ...
+	pps := strings.Split(string(data), "\n")
+	for i := range pps {
+		fmt.Println(i, " : ", pps[i])
+		if len(pps[i]) <= 0 {
+			continue
+		} else if pps[i][0] == '#' {
+			continue
+		} else if pps[i][0] == '=' {
+			continue
+		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
+			pp := strings.Split(pps[i], ":")
+			prevIDs := proc_adjl_pp(pp[0])
+			postIDs := proc_adjl_pp(pp[1])
+			for _, x := range prevIDs {
+				for _, y := range postIDs {
+					PN2LN_nACH_mat[x][y] = 1
+				}
+			}
+		} else {
+			fmt.Println("Error in processing: ", PN2LN_nACH_adjlName, "\t line: ", i, " !!!")
+			os.Exit(-1)
+		}
+	}
+}
+
+func readin_adjl_matrix() {
+	defer Exit(Enter("$FN()"))
+	if if_readin_matrix <= 0 {
+		return
+	}
+	if if_readin_csv_matrix > 0 {
+		// if it >0, we should read csvs
+		return
+	}
+	// ...
+	if exist_file(LN2PN_slow_adjlName) {
+		readin_adjl_LN2PN_slow()
+	} else {
+		fmt.Println(LN2PN_slow_adjlName, " NOT found!!!")
+	}
+	// ...
+	if exist_file(LN2PN_GABA_adjlName) {
+		readin_adjl_LN2PN_GABA()
+	} else {
+		fmt.Println(LN2PN_GABA_adjlName, " NOT found!!!")
+	}
+	// ...
+	if exist_file(LN2LN_GABA_adjlName) {
+		readin_adjl_LN2LN_GABA()
+	} else {
+		fmt.Println(LN2LN_GABA_adjlName, " NOT found!!!")
+	}
+	// ...
+	if exist_file(PN2PN_nACH_adjlName) {
+		readin_adjl_PN2PN_nACH()
+	} else {
+		fmt.Println(PN2PN_nACH_adjlName, " NOT found!!!")
+	}
+	// ...
+	if exist_file(PN2LN_nACH_adjlName) {
+		readin_adjl_PN2LN_nACH()
+	} else {
+		fmt.Println(PN2LN_nACH_adjlName, " NOT found!!!")
+	}
+}
+
+func readin_csv_matrix() {
 	var i, j int64
 	defer Exit(Enter("$FN()"))
 	if if_readin_matrix <= 0 {
 		return
 	}
+	if if_readin_csv_matrix <= 0 {
+		return
+	}
 	// ...
 	if exist_file(LN2PN_slow_csvName) {
 		LN2PN_slow_csv, err = os.Open(LN2PN_slow_csvName)
-		check(err)
+		check_err(err)
 		defer LN2PN_slow_csv.Close()
 		reader := csv.NewReader(LN2PN_slow_csv)
 		fmt.Println("LN2PN_slow_mat")
@@ -591,7 +826,7 @@ func readin_matrix() {
 			record, err := reader.Read()
 			for j = 0; float64(j) < math.Min(float64(PN_number), float64(len(record))) && err == nil; j++ {
 				LN2PN_slow_mat[i][j], err = strconv.ParseFloat(record[j], 64)
-				check(err)
+				check_err(err)
 			}
 		}
 	} else {
@@ -600,7 +835,7 @@ func readin_matrix() {
 	// ...
 	if exist_file(LN2PN_GABA_csvName) {
 		LN2PN_GABA_csv, err = os.Open(LN2PN_GABA_csvName)
-		check(err)
+		check_err(err)
 		defer LN2PN_GABA_csv.Close()
 		reader := csv.NewReader(LN2PN_GABA_csv)
 		fmt.Println("LN2PN_GABA_mat")
@@ -608,7 +843,7 @@ func readin_matrix() {
 			record, err := reader.Read()
 			for j = 0; float64(j) < math.Min(float64(PN_number), float64(len(record))) && err == nil; j++ {
 				LN2PN_GABA_mat[i][j], err = strconv.ParseFloat(record[j], 64)
-				check(err)
+				check_err(err)
 			}
 		}
 	} else {
@@ -617,7 +852,7 @@ func readin_matrix() {
 	// ...
 	if exist_file(LN2LN_GABA_csvName) {
 		LN2LN_GABA_csv, err = os.Open(LN2LN_GABA_csvName)
-		check(err)
+		check_err(err)
 		defer LN2LN_GABA_csv.Close()
 		reader := csv.NewReader(LN2LN_GABA_csv)
 		fmt.Println("LN2LN_GABA_mat")
@@ -625,7 +860,7 @@ func readin_matrix() {
 			record, err := reader.Read()
 			for j = 0; float64(j) < math.Min(float64(LN_number), float64(len(record))) && err == nil; j++ {
 				LN2LN_GABA_mat[i][j], err = strconv.ParseFloat(record[j], 64)
-				check(err)
+				check_err(err)
 			}
 		}
 	} else {
@@ -634,7 +869,7 @@ func readin_matrix() {
 	// ...
 	if exist_file(PN2PN_nACH_csvName) {
 		PN2PN_nACH_csv, err = os.Open(PN2PN_nACH_csvName)
-		check(err)
+		check_err(err)
 		defer PN2PN_nACH_csv.Close()
 		reader := csv.NewReader(PN2PN_nACH_csv)
 		fmt.Println("PN2PN_nACH_mat")
@@ -642,7 +877,7 @@ func readin_matrix() {
 			record, err := reader.Read()
 			for j = 0; float64(j) < math.Min(float64(PN_number), float64(len(record))) && err == nil; j++ {
 				PN2PN_nACH_mat[i][j], err = strconv.ParseFloat(record[j], 64)
-				check(err)
+				check_err(err)
 			}
 		}
 	} else {
@@ -651,7 +886,7 @@ func readin_matrix() {
 	// ...
 	if exist_file(PN2LN_nACH_csvName) {
 		PN2LN_nACH_csv, err = os.Open(PN2LN_nACH_csvName)
-		check(err)
+		check_err(err)
 		defer PN2LN_nACH_csv.Close()
 		reader := csv.NewReader(PN2LN_nACH_csv)
 		fmt.Println("PN2LN_nACH_mat")
@@ -659,7 +894,7 @@ func readin_matrix() {
 			record, err := reader.Read()
 			for j = 0; float64(j) < math.Min(float64(LN_number), float64(len(record))) && err == nil; j++ {
 				PN2LN_nACH_mat[i][j], err = strconv.ParseFloat(record[j], 64)
-				check(err)
+				check_err(err)
 			}
 		}
 	} else {
@@ -672,7 +907,11 @@ func init_matrix(yaml_obj map[interface{}]interface{}) {
 	defer Exit(Enter("$FN(%v)", yaml_obj))
 	if if_readin_matrix > 0 {
 		fmt.Println("Using the readin coupling matrix!!!")
-		readin_matrix()
+		if if_readin_csv_matrix > 0 {
+			readin_csv_matrix()
+		} else {
+			readin_adjl_matrix()
+		}
 		return
 	} else {
 		fmt.Println("Using randomly set coupling matrix!!!")
@@ -778,15 +1017,15 @@ func save_matrix() {
 	var i, j int64
 	defer Exit(Enter("$FN()"))
 	LN2PN_slow_txt, err = os.OpenFile(LN2PN_slow_txtName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	LN2PN_GABA_txt, err = os.OpenFile(LN2PN_GABA_txtName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	LN2LN_GABA_txt, err = os.OpenFile(LN2LN_GABA_txtName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	PN2PN_nACH_txt, err = os.OpenFile(PN2PN_nACH_txtName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	PN2LN_nACH_txt, err = os.OpenFile(PN2LN_nACH_txtName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	for i = 0; i < LN_number; i++ { // ln to pn ; slow
 		for j = 0; j < PN_number; j++ {
@@ -1128,7 +1367,7 @@ func take_iteration(click int64) { // xNs_pre -> xNs_cur
 ///////////////// do the input, interface and main func ////
 ////////////////////////////////////////////////////////////
 
-func check(e error) {
+func check_err(e error) {
 	if e != nil {
 		panic(e)
 	}
@@ -1229,6 +1468,17 @@ var (
 	LN2LN_GABA_csvName string = strings.Join([]string{save_file_dir, "mat_LN2LN_GABA.csv"}, "")
 	PN2PN_nACH_csvName string = strings.Join([]string{save_file_dir, "mat_PN2PN_nACH.csv"}, "")
 	PN2LN_nACH_csvName string = strings.Join([]string{save_file_dir, "mat_PN2LN_nACH.csv"}, "")
+	// ...
+	LN2PN_slow_adjl     *os.File
+	LN2PN_GABA_adjl     *os.File
+	LN2LN_GABA_adjl     *os.File
+	PN2PN_nACH_adjl     *os.File
+	PN2LN_nACH_adjl     *os.File
+	LN2PN_slow_adjlName string = strings.Join([]string{save_file_dir, "mat_LN2PN_slow.adjl"}, "")
+	LN2PN_GABA_adjlName string = strings.Join([]string{save_file_dir, "mat_LN2PN_GABA.adjl"}, "")
+	LN2LN_GABA_adjlName string = strings.Join([]string{save_file_dir, "mat_LN2LN_GABA.adjl"}, "")
+	PN2PN_nACH_adjlName string = strings.Join([]string{save_file_dir, "mat_PN2PN_nACH.adjl"}, "")
+	PN2LN_nACH_adjlName string = strings.Join([]string{save_file_dir, "mat_PN2LN_nACH.adjl"}, "")
 )
 
 func init_rand() {
@@ -1243,7 +1493,7 @@ func init_para() { // add more thing to write at initial?
 	} else {
 		fmt.Println("WARNING: creat new config file!!!")
 		file_config, err = os.OpenFile(filename_config, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-		check(err) // always rewrite the config.yaml !!! !!! !!!
+		check_err(err) // always rewrite the config.yaml !!! !!! !!!
 		// ...
 		_, _ = file_config.WriteString("if_running: ")
 		_, _ = file_config.Write([]byte(strconv.FormatInt(if_running, 10)))
@@ -1426,44 +1676,44 @@ func proc_filenames() {
 func open_plot_files() {
 	defer Exit(Enter("$FN()"))
 	file_vRaster_PN, err = os.OpenFile(filename_vRaster_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_vRaster_LN, err = os.OpenFile(filename_vRaster_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_stimRaster_PN, err = os.OpenFile(filename_stimRaster_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_stimRaster_LN, err = os.OpenFile(filename_stimRaster_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	file_synaRaster_slow_PN, err = os.OpenFile(filename_synaRaster_slow_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaRaster_GABA_PN, err = os.OpenFile(filename_synaRaster_GABA_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaRaster_GABA_LN, err = os.OpenFile(filename_synaRaster_GABA_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaRaster_nACH_PN, err = os.OpenFile(filename_synaRaster_nACH_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaRaster_nACH_LN, err = os.OpenFile(filename_synaRaster_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	file_vFluct_PN, err = os.OpenFile(filename_vFluct_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_vFluct_LN, err = os.OpenFile(filename_vFluct_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_stimFluct_PN, err = os.OpenFile(filename_stimFluct_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_stimFluct_LN, err = os.OpenFile(filename_stimFluct_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	file_synaFluct_slow_PN, err = os.OpenFile(filename_synaFluct_slow_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaFluct_GABA_PN, err = os.OpenFile(filename_synaFluct_GABA_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaFluct_GABA_LN, err = os.OpenFile(filename_synaFluct_GABA_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaFluct_nACH_PN, err = os.OpenFile(filename_synaFluct_nACH_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	file_synaFluct_nACH_LN, err = os.OpenFile(filename_synaFluct_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 }
 
 func close_plot_files() {
@@ -1520,9 +1770,9 @@ func init_stimRaster_plot() {
 	debug := false
 	stimPalette := "set palette defined(0 '#FFFFCC', -1 '#FFEDA0', -2 '#FED976', -3 '#FEB24C', -5 '#FD8D3C', -8 '#FC4E2A', -11 '#E31A1C', -14 '#B10026')"
 	plot_stimRaster_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_stimRaster_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_stimRaster_PN.CheckedCmd("reset")
 	plot_stimRaster_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -1554,15 +1804,15 @@ func init_synaRaster_plot() {
 	debug := false
 	stimPalette := "set palette defined(0 '#FFFFCC', -1 '#FFEDA0', -2 '#FED976', -3 '#FEB24C', -5 '#FD8D3C', -8 '#FC4E2A', -11 '#E31A1C', -14 '#B10026')"
 	plot_synaRaster_slow_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaRaster_GABA_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaRaster_GABA_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaRaster_nACH_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaRaster_nACH_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_synaRaster_slow_PN.CheckedCmd("reset")
 	plot_synaRaster_slow_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -1627,9 +1877,9 @@ func init_vRaster_plot() {
 	debug := false
 	vPalette := "set palette defined(0 '#FFFFCC', 3 '#FFEDA0', 6 '#FED976', 9 '#FEB24C', 11 '#FD8D3C', 12 '#FC4E2A', 13 '#E31A1C', 14 '#B10026')"
 	plot_vRaster_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_vRaster_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_vRaster_PN.CheckedCmd("reset")
 	plot_vRaster_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -1660,9 +1910,9 @@ func init_vFluct_plot() {
 	persist := false // if close the plotting frame when the plot is done
 	debug := false
 	plot_vFluct_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_vFluct_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_vFluct_PN.CheckedCmd("reset")
 	plot_vFluct_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -1687,9 +1937,9 @@ func init_stimFluct_plot() {
 	persist := false // if close the plotting frame when the plot is done
 	debug := false
 	plot_stimFluct_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_stimFluct_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_stimFluct_PN.CheckedCmd("reset")
 	plot_stimFluct_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -1714,15 +1964,15 @@ func init_synaFluct_plot() {
 	persist := false // if close the plotting frame when the plot is done
 	debug := false
 	plot_synaFluct_slow_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaFluct_GABA_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaFluct_GABA_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaFluct_nACH_PN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	plot_synaFluct_nACH_LN, err = gnuplot.NewPlotter(plotname, persist, debug)
-	check(err)
+	check_err(err)
 	// ...
 	plot_synaFluct_slow_PN.CheckedCmd("reset")
 	plot_synaFluct_slow_PN.CheckedCmd("set term gif size 800,400 delay 100")
@@ -2213,24 +2463,24 @@ func save_docs() {
 	var i, id int64
 	defer Exit(Enter("$FN()"))
 	doc_V_PN, err = os.OpenFile(docname_V_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_V_LN, err = os.OpenFile(docname_V_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_stim_PN, err = os.OpenFile(docname_stim_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_stim_LN, err = os.OpenFile(docname_stim_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	doc_slow_PN, err = os.OpenFile(docname_slow_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_GABA_PN, err = os.OpenFile(docname_GABA_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_GABA_LN, err = os.OpenFile(docname_GABA_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_nACH_PN, err = os.OpenFile(docname_nACH_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	doc_nACH_LN, err = os.OpenFile(docname_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	for i = 0; i <= time_end; i++ {
 		_, _ = doc_V_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
@@ -2419,6 +2669,7 @@ func disp_para() {
 	fmt.Println("PN2LN_nACH_prob ", PN2LN_nACH_prob)
 	// need to check the reality??
 	fmt.Println("if_readin_matrix ", if_readin_matrix)
+	fmt.Println("if_readin_csv_matrix ", if_readin_csv_matrix)
 	fmt.Println("if_slowGABA_overlap ", if_slowGABA_overlap)
 	fmt.Println("fading_rate ", fading_rate)
 	fmt.Println("ms_per_frame ", ms_per_frame)
@@ -2445,9 +2696,9 @@ func disp_spike_freq() {
 	var i int64
 	defer Exit(Enter("$FN()"))
 	PN_spike_freq_file, err = os.OpenFile(PN_spike_freq_filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	LN_spike_freq_file, err = os.OpenFile(LN_spike_freq_filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check(err)
+	check_err(err)
 	// ...
 	fmt.Println("\nSpiking rates (spikes per second) of each neuron <<", freq_scoping)
 	for i = 0; i < PN_number; i++ {
@@ -2498,7 +2749,7 @@ func proc_args() {
 		t_int2, err2 := strconv.Atoi(os.Args[2])
 		if err1 != nil || err2 != nil { // error proc
 			usage()
-			check(err)
+			check_err(err)
 			return
 		}
 		// ...
@@ -2514,7 +2765,7 @@ func proc_args() {
 		t_int, err := strconv.Atoi(os.Args[1])
 		if err != nil { // error proc
 			usage()
-			check(err)
+			check_err(err)
 			return
 		}
 		// ...
@@ -2544,7 +2795,7 @@ func main() {
 	if if_runtime_trace > 0 {
 		flagCpuprofile = "cpuRuntime.prof"
 		cpuProf_file, err = os.OpenFile(flagCpuprofile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-		check(err)
+		check_err(err)
 		pprof.StartCPUProfile(cpuProf_file)
 		defer pprof.StopCPUProfile()
 	}
