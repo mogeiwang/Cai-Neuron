@@ -161,6 +161,9 @@ package main
 // a) change default neuron numbers, and do other minor fix.
 // B 4.0 update:
 // a) read adjacency list, in additional to the previous csv reading.
+// C 0.1 update:
+// a) support inline comments in adjl files
+// b) do NOT init gnuplots by default
 
 import (
 	"encoding/csv"
@@ -183,7 +186,7 @@ const (
 	neuron_num_coefs     = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix     = 0 // readin matrix, or randomly set?
 	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
-	if_init_rt_plots     = 1 // >0 init gnuplot, <=0 do not init.
+	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default
 	if_runtime_trace     = 0
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
@@ -622,7 +625,6 @@ func readin_adjl_LN2PN_slow() {
 	// ...
 	pps := strings.Split(string(data), "\n") // Pre- and Post- Synaptic
 	for i := range pps {
-		fmt.Println(i, " : ", pps[i])
 		if len(pps[i]) <= 0 {
 			continue
 		} else if pps[i][0] == '#' {
@@ -630,7 +632,8 @@ func readin_adjl_LN2PN_slow() {
 		} else if pps[i][0] == '=' {
 			continue
 		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
-			pp := strings.Split(pps[i], ":") // pp: pre or post
+			pg := strings.Split(pps[i], "#")[0]
+			pp := strings.Split(pg, ":") // pp: pre or post
 			prevIDs := proc_adjl_pp(pp[0])
 			postIDs := proc_adjl_pp(pp[1])
 			for _, x := range prevIDs {
@@ -652,7 +655,6 @@ func readin_adjl_LN2PN_GABA() {
 	// ...
 	pps := strings.Split(string(data), "\n")
 	for i := range pps {
-		fmt.Println(i, " : ", pps[i])
 		if len(pps[i]) <= 0 {
 			continue
 		} else if pps[i][0] == '#' {
@@ -660,7 +662,8 @@ func readin_adjl_LN2PN_GABA() {
 		} else if pps[i][0] == '=' {
 			continue
 		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
-			pp := strings.Split(pps[i], ":")
+			pg := strings.Split(pps[i], "#")[0]
+			pp := strings.Split(pg, ":")
 			prevIDs := proc_adjl_pp(pp[0])
 			postIDs := proc_adjl_pp(pp[1])
 			for _, x := range prevIDs {
@@ -682,7 +685,6 @@ func readin_adjl_LN2LN_GABA() {
 	// ...
 	pps := strings.Split(string(data), "\n")
 	for i := range pps {
-		fmt.Println(i, " : ", pps[i])
 		if len(pps[i]) <= 0 {
 			continue
 		} else if pps[i][0] == '#' {
@@ -690,7 +692,8 @@ func readin_adjl_LN2LN_GABA() {
 		} else if pps[i][0] == '=' {
 			continue
 		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
-			pp := strings.Split(pps[i], ":")
+			pg := strings.Split(pps[i], "#")[0]
+			pp := strings.Split(pg, ":")
 			prevIDs := proc_adjl_pp(pp[0])
 			postIDs := proc_adjl_pp(pp[1])
 			for _, x := range prevIDs {
@@ -712,7 +715,6 @@ func readin_adjl_PN2PN_nACH() {
 	// ...
 	pps := strings.Split(string(data), "\n")
 	for i := range pps {
-		fmt.Println(i, " : ", pps[i])
 		if len(pps[i]) <= 0 {
 			continue
 		} else if pps[i][0] == '#' {
@@ -720,7 +722,8 @@ func readin_adjl_PN2PN_nACH() {
 		} else if pps[i][0] == '=' {
 			continue
 		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
-			pp := strings.Split(pps[i], ":")
+			pg := strings.Split(pps[i], "#")[0]
+			pp := strings.Split(pg, ":")
 			prevIDs := proc_adjl_pp(pp[0])
 			postIDs := proc_adjl_pp(pp[1])
 			for _, x := range prevIDs {
@@ -742,7 +745,6 @@ func readin_adjl_PN2LN_nACH() {
 	// ...
 	pps := strings.Split(string(data), "\n")
 	for i := range pps {
-		fmt.Println(i, " : ", pps[i])
 		if len(pps[i]) <= 0 {
 			continue
 		} else if pps[i][0] == '#' {
@@ -750,7 +752,8 @@ func readin_adjl_PN2LN_nACH() {
 		} else if pps[i][0] == '=' {
 			continue
 		} else if pps[i][0] >= '0' && pps[i][0] <= '9' || pps[i][0] == ' ' || pps[i][0] == '\t' {
-			pp := strings.Split(pps[i], ":")
+			pg := strings.Split(pps[i], "#")[0]
+			pp := strings.Split(pg, ":")
 			prevIDs := proc_adjl_pp(pp[0])
 			postIDs := proc_adjl_pp(pp[1])
 			for _, x := range prevIDs {
