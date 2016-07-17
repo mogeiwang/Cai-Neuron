@@ -9,6 +9,8 @@ package main
 //           , Dec 26, 2015, Ver1, SJTU, Shanghai
 //           , Dec 30, 2015, Ver2, SJTU, Shanghai
 //           , Jan 04, 2016, Ver3, SJTU, Shanghai
+// charming  , May 21, 2016, init, SJTU, Shanghai
+//           , Jul 17, 2016, Ver1, SJTU, Shanghai
 // A 1.0.1 update:
 // a) init_matrix has its own rand.Seed now
 // b) xN_V_list, xN_stim_list sampling rate reset to 1item per ms
@@ -164,6 +166,13 @@ package main
 // C 0.1 update:
 // a) support inline comments in adjl files
 // b) do NOT init gnuplots by default
+// C 1.0 update: (after discussed with David)
+// a) change to 90PN/30LN. stim 33.3%
+// b) copy PRC's odors onset & offset process - exponentially & length
+// c) add a var to early end
+// d) add doc file control vars (save doc_stim. doc_sync. or not)
+// e) set the default length of leading period (run before time0) to 0
+// f) do not use set to fasten the program? NOT YET
 
 import (
 	"encoding/csv"
@@ -188,24 +197,27 @@ const (
 	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
 	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default
 	if_runtime_trace     = 0
+	if_save_doc_stim     = 0
+	if_save_doc_sync     = 0
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
 	freq_scoping         = "stimulated" // noStim, rising, stimulated, decay, noStim
 	// ...
-	ms_per_second int64 = 1000               // 1000 ms = 1 S
-	time_begin    int64 = 5 * ms_per_second  // length of transition process before 0.
-	time_end      int64 = 10 * ms_per_second // run how many ms!!! start from 0.
-	period_len    int64 = time_end           // set to "time_end" to prevent stimulating periodically
-	PN_number     int64 = 250 * neuron_num_coefs
-	LN_number     int64 = 90 * neuron_num_coefs
-	stim_PN_num   int64 = 100 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 30 * neuron_num_coefs
+	ms_per_second int64 = 1000                         // 1000 ms = 1 S
+	time_begin    int64 = 0 * ms_per_second            // length of transition process before 0.
+	early_end     int64 = 5 * ms_per_second            // the early end length. stop before the 1st para in time_end
+	time_end      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always
+	period_len    int64 = time_end                     // set to "time_end" to prevent stimulating periodically
+	PN_number     int64 = 90 * neuron_num_coefs
+	LN_number     int64 = 30 * neuron_num_coefs
+	stim_PN_num   int64 = 30 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 10 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
-	stim_onset  float64 = 0.15 * float64(time_end) // 0.15 stimulus starts at this moment !!! in ms
-	stim_offset float64 = 0.40 * float64(time_end) // 0.40 withdraw stimulus at this moment (time in ms)
-	stim_rise   float64 = 0.05 * float64(time_end) // 0.05 rise time of stimulus input onset (1.5-2)
-	stim_decay  float64 = 0.20 * float64(time_end) // 0.20 decay time (Inf) of stimulus input offset (4.0-6)
+	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment !!! in ms
+	stim_offset float64 = 3.5 * float64(ms_per_second) // 4.0 withdraw stimulus at this moment (time in ms)
+	stim_rise   float64 = 0.4 * float64(ms_per_second) // 0.5 rise time of stimulus input onset (1.5-2)
+	stim_decay  float64 = 1.0 * float64(ms_per_second) // 2.0 decay time (Inf) of stimulus input offset (4.0-6)
 	// ...
 	use_exist_config bool    = true                        // read the config file [or rewrite it]?
 	plot_file_dir    string  = "/mnt/tmpDisk/"             // file_dir
@@ -239,11 +251,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.050 / neuron_num_coefs
-	LN2PN_GABA_prob float64 = 0.050 / neuron_num_coefs
-	LN2LN_GABA_prob float64 = 0.084 / neuron_num_coefs
-	PN2PN_nACH_prob float64 = 0.036 / neuron_num_coefs
-	PN2LN_nACH_prob float64 = 0.036 / neuron_num_coefs
+	LN2PN_slow_prob float64 = 0.15 / neuron_num_coefs //  0.050
+	LN2PN_GABA_prob float64 = 0.15 / neuron_num_coefs //  0.050
+	LN2LN_GABA_prob float64 = 0.25 / neuron_num_coefs //  0.084
+	PN2PN_nACH_prob float64 = 0.10 / neuron_num_coefs //  0.036
+	PN2LN_nACH_prob float64 = 0.10 / neuron_num_coefs //  0.036
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
@@ -1203,13 +1215,13 @@ func get_stim_PN(id int64) {
 	if clock < stim_onset {
 		inputRate = 0
 	} else if clock >= stim_onset && clock < (stim_onset+stim_rise) { // rising stimulus
-		//inputRate = math.Exp(-math.Pow(clock-stim_onset-stim_rise, 2)/1000000) * ORN_input_rate
-		inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
+		inputRate = math.Exp(-math.Pow(clock-stim_onset-stim_rise, 2)/100000) * ORN_input_rate
+		//inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		inputRate = ORN_input_rate
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
-		//inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
-		inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
+		inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
+		//inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
 	} else if clock >= (stim_offset + stim_decay) { // after decay
 		inputRate = 0
 	}
@@ -1252,13 +1264,13 @@ func get_stim_LN(id int64) {
 	if clock < stim_onset {
 		inputRate = 0
 	} else if clock >= stim_onset && clock < (stim_onset+stim_rise) { // rising stimulus
-		//inputRate = math.Exp(-math.Pow(clock-stim_onset-stim_rise, 2)/1000000) * ORN_input_rate
-		inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
+		inputRate = math.Exp(-math.Pow(clock-stim_onset-stim_rise, 2)/100000) * ORN_input_rate
+		//inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		inputRate = ORN_input_rate
 	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
-		//inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
-		inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
+		inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
+		//inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
 	} else if clock >= (stim_offset + stim_decay) { // after decay
 		inputRate = 0
 	}
@@ -2469,21 +2481,25 @@ func save_docs() {
 	check_err(err)
 	doc_V_LN, err = os.OpenFile(docname_V_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check_err(err)
-	doc_stim_PN, err = os.OpenFile(docname_stim_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_stim_LN, err = os.OpenFile(docname_stim_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
+	if if_save_doc_stim > 0 {
+		doc_stim_PN, err = os.OpenFile(docname_stim_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+		doc_stim_LN, err = os.OpenFile(docname_stim_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+	}
 	// ...
-	doc_slow_PN, err = os.OpenFile(docname_slow_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_GABA_PN, err = os.OpenFile(docname_GABA_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_GABA_LN, err = os.OpenFile(docname_GABA_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_nACH_PN, err = os.OpenFile(docname_nACH_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_nACH_LN, err = os.OpenFile(docname_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
+	if if_save_doc_sync > 0 {
+		doc_slow_PN, err = os.OpenFile(docname_slow_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+		doc_GABA_PN, err = os.OpenFile(docname_GABA_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+		doc_GABA_LN, err = os.OpenFile(docname_GABA_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+		doc_nACH_PN, err = os.OpenFile(docname_nACH_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+		doc_nACH_LN, err = os.OpenFile(docname_nACH_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+		check_err(err)
+	}
 	// ...
 	for i = 0; i <= time_end; i++ {
 		_, _ = doc_V_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
@@ -2493,12 +2509,14 @@ func save_docs() {
 		}
 		_, _ = doc_V_PN.WriteString("\n")
 		// ...
-		_, _ = doc_stim_PN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < PN_number; id++ {
-			_, _ = doc_stim_PN.WriteString(" ")
-			_, _ = doc_stim_PN.Write([]byte(strconv.FormatFloat(PN_stim_list[i][id], 'f', 15, 64)))
+		if if_save_doc_stim > 0 {
+			_, _ = doc_stim_PN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < PN_number; id++ {
+				_, _ = doc_stim_PN.WriteString(" ")
+				_, _ = doc_stim_PN.Write([]byte(strconv.FormatFloat(PN_stim_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_stim_PN.WriteString("\n")
 		}
-		_, _ = doc_stim_PN.WriteString("\n")
 		// ...
 		_, _ = doc_V_LN.Write([]byte(strconv.FormatInt(i, 10)))
 		for id = 0; id < LN_number; id++ {
@@ -2507,58 +2525,66 @@ func save_docs() {
 		}
 		_, _ = doc_V_LN.WriteString("\n")
 		// ...
-		_, _ = doc_stim_LN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < LN_number; id++ {
-			_, _ = doc_stim_LN.WriteString(" ")
-			_, _ = doc_stim_LN.Write([]byte(strconv.FormatFloat(LN_stim_list[i][id], 'f', 15, 64)))
+		if if_save_doc_stim > 0 {
+			_, _ = doc_stim_LN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < LN_number; id++ {
+				_, _ = doc_stim_LN.WriteString(" ")
+				_, _ = doc_stim_LN.Write([]byte(strconv.FormatFloat(LN_stim_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_stim_LN.WriteString("\n")
 		}
-		_, _ = doc_stim_LN.WriteString("\n")
 		// ...
-		_, _ = doc_slow_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
-		for id = 0; id < PN_number; id++ {
-			_, _ = doc_slow_PN.WriteString(" ")
-			_, _ = doc_slow_PN.Write([]byte(strconv.FormatFloat(PN_slow_list[i][id], 'f', 15, 64)))
+		if if_save_doc_sync > 0 {
+			_, _ = doc_slow_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
+			for id = 0; id < PN_number; id++ {
+				_, _ = doc_slow_PN.WriteString(" ")
+				_, _ = doc_slow_PN.Write([]byte(strconv.FormatFloat(PN_slow_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_slow_PN.WriteString("\n")
+			// ...
+			_, _ = doc_GABA_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
+			for id = 0; id < PN_number; id++ {
+				_, _ = doc_GABA_PN.WriteString(" ")
+				_, _ = doc_GABA_PN.Write([]byte(strconv.FormatFloat(PN_GABA_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_GABA_PN.WriteString("\n")
+			// ...
+			_, _ = doc_GABA_LN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < LN_number; id++ {
+				_, _ = doc_GABA_LN.WriteString(" ")
+				_, _ = doc_GABA_LN.Write([]byte(strconv.FormatFloat(LN_GABA_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_GABA_LN.WriteString("\n")
+			// ...
+			_, _ = doc_nACH_PN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < PN_number; id++ {
+				_, _ = doc_nACH_PN.WriteString(" ")
+				_, _ = doc_nACH_PN.Write([]byte(strconv.FormatFloat(PN_nACH_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_nACH_PN.WriteString("\n")
+			// ...
+			_, _ = doc_nACH_LN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < LN_number; id++ {
+				_, _ = doc_nACH_LN.WriteString(" ")
+				_, _ = doc_nACH_LN.Write([]byte(strconv.FormatFloat(LN_nACH_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_nACH_LN.WriteString("\n")
 		}
-		_, _ = doc_slow_PN.WriteString("\n")
-		// ...
-		_, _ = doc_GABA_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
-		for id = 0; id < PN_number; id++ {
-			_, _ = doc_GABA_PN.WriteString(" ")
-			_, _ = doc_GABA_PN.Write([]byte(strconv.FormatFloat(PN_GABA_list[i][id], 'f', 15, 64)))
-		}
-		_, _ = doc_GABA_PN.WriteString("\n")
-		// ...
-		_, _ = doc_GABA_LN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < LN_number; id++ {
-			_, _ = doc_GABA_LN.WriteString(" ")
-			_, _ = doc_GABA_LN.Write([]byte(strconv.FormatFloat(LN_GABA_list[i][id], 'f', 15, 64)))
-		}
-		_, _ = doc_GABA_LN.WriteString("\n")
-		// ...
-		_, _ = doc_nACH_PN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < PN_number; id++ {
-			_, _ = doc_nACH_PN.WriteString(" ")
-			_, _ = doc_nACH_PN.Write([]byte(strconv.FormatFloat(PN_nACH_list[i][id], 'f', 15, 64)))
-		}
-		_, _ = doc_nACH_PN.WriteString("\n")
-		// ...
-		_, _ = doc_nACH_LN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < LN_number; id++ {
-			_, _ = doc_nACH_LN.WriteString(" ")
-			_, _ = doc_nACH_LN.Write([]byte(strconv.FormatFloat(LN_nACH_list[i][id], 'f', 15, 64)))
-		}
-		_, _ = doc_nACH_LN.WriteString("\n")
 	}
 	// ...
-	doc_stim_PN.Close()
-	doc_stim_LN.Close()
+	if if_save_doc_stim > 0 {
+		doc_stim_PN.Close()
+		doc_stim_LN.Close()
+	}
 	doc_V_PN.Close()
 	doc_V_LN.Close()
-	doc_slow_PN.Close()
-	doc_GABA_PN.Close()
-	doc_GABA_LN.Close()
-	doc_nACH_PN.Close()
-	doc_nACH_LN.Close()
+	if if_save_doc_sync > 0 {
+		doc_slow_PN.Close()
+		doc_GABA_PN.Close()
+		doc_GABA_LN.Close()
+		doc_nACH_PN.Close()
+		doc_nACH_LN.Close()
+	}
 }
 
 func usage() {
@@ -2692,6 +2718,8 @@ func disp_para() {
 	fmt.Println("if_vFluct_plot ", if_vFluct_plot)
 	fmt.Println("if_stimFluct_plot ", if_stimFluct_plot)
 	fmt.Println("if_synaFluct_plot ", if_synaFluct_plot)
+	fmt.Println("if_save_doc_stim", if_save_doc_stim)
+	fmt.Println("if_save_doc_sync", if_save_doc_sync)
 	fmt.Println()
 }
 
