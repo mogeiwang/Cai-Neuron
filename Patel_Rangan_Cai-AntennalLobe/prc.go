@@ -176,6 +176,10 @@ package main
 // C 1.1 update:
 // a) remove the noStim period neurons spike freq counting
 // b) do not use period any longer (period_len==time_end always!)
+// C 1.1.1 update:
+// a) more doc saving controls
+// C 2 update:
+// a) upgrade to  830 PNs, 300 LNs
 
 import (
 	"encoding/csv"
@@ -198,10 +202,13 @@ const (
 	neuron_num_coefs     = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix     = 0 // readin matrix, or randomly set?
 	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
-	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default
+	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default !!!
 	if_runtime_trace     = 0
+	if_save_doc_v        = 1
 	if_save_doc_stim     = 0
 	if_save_doc_sync     = 0
+	if_save_doc_PNvs     = 1 // save volt and stim of PNs?
+	if_save_doc_LNvs     = 0
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
 	freq_scoping         = "stimulated" // rising, stimulated, decay  # noStim has been removed
@@ -210,10 +217,10 @@ const (
 	time_begin    int64 = 0 * ms_per_second            // length of transition process before 0.
 	early_end     int64 = 5 * ms_per_second            // the early end length. stop before the 1st para in time_end
 	time_end      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always
-	PN_number     int64 = 90 * neuron_num_coefs
-	LN_number     int64 = 30 * neuron_num_coefs
-	stim_PN_num   int64 = 30 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 10 * neuron_num_coefs
+	PN_number     int64 = 830 * neuron_num_coefs
+	LN_number     int64 = 300 * neuron_num_coefs
+	stim_PN_num   int64 = 300 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 100 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment !!! in ms
@@ -253,11 +260,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.15 / neuron_num_coefs //  0.050
-	LN2PN_GABA_prob float64 = 0.15 / neuron_num_coefs //  0.050
-	LN2LN_GABA_prob float64 = 0.25 / neuron_num_coefs //  0.084
-	PN2PN_nACH_prob float64 = 0.10 / neuron_num_coefs //  0.036
-	PN2LN_nACH_prob float64 = 0.10 / neuron_num_coefs //  0.036
+	LN2PN_slow_prob float64 = 0.015 / neuron_num_coefs //  0.050
+	LN2PN_GABA_prob float64 = 0.015 / neuron_num_coefs //  0.050
+	LN2LN_GABA_prob float64 = 0.025 / neuron_num_coefs //  0.084
+	PN2PN_nACH_prob float64 = 0.010 / neuron_num_coefs //  0.036
+	PN2LN_nACH_prob float64 = 0.010 / neuron_num_coefs //  0.036
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
@@ -2481,15 +2488,25 @@ func init_neuron() {
 func save_docs() {
 	var i, id int64
 	defer Exit(Enter("$FN()"))
-	doc_V_PN, err = os.OpenFile(docname_V_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
-	doc_V_LN, err = os.OpenFile(docname_V_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-	check_err(err)
+	if if_save_doc_v > 0 {
+		if if_save_doc_PNvs > 0 {
+			doc_V_PN, err = os.OpenFile(docname_V_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+			check_err(err)
+		}
+		if if_save_doc_LNvs > 0 {
+			doc_V_LN, err = os.OpenFile(docname_V_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+			check_err(err)
+		}
+	}
 	if if_save_doc_stim > 0 {
-		doc_stim_PN, err = os.OpenFile(docname_stim_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-		check_err(err)
-		doc_stim_LN, err = os.OpenFile(docname_stim_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
-		check_err(err)
+		if if_save_doc_PNvs > 0 {
+			doc_stim_PN, err = os.OpenFile(docname_stim_PN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+			check_err(err)
+		}
+		if if_save_doc_LNvs > 0 {
+			doc_stim_LN, err = os.OpenFile(docname_stim_LN, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
+			check_err(err)
+		}
 	}
 	// ...
 	if if_save_doc_sync > 0 {
@@ -2506,14 +2523,16 @@ func save_docs() {
 	}
 	// ...
 	for i = 0; i <= time_end; i++ {
-		_, _ = doc_V_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
-		for id = 0; id < PN_number; id++ {
-			_, _ = doc_V_PN.WriteString(" ")
-			_, _ = doc_V_PN.Write([]byte(strconv.FormatFloat(PN_V_list[i][id], 'f', 15, 64)))
+		if if_save_doc_v > 0 && if_save_doc_PNvs > 0 {
+			_, _ = doc_V_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
+			for id = 0; id < PN_number; id++ {
+				_, _ = doc_V_PN.WriteString(" ")
+				_, _ = doc_V_PN.Write([]byte(strconv.FormatFloat(PN_V_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_V_PN.WriteString("\n")
 		}
-		_, _ = doc_V_PN.WriteString("\n")
 		// ...
-		if if_save_doc_stim > 0 {
+		if if_save_doc_stim > 0 && if_save_doc_PNvs > 0 {
 			_, _ = doc_stim_PN.Write([]byte(strconv.FormatInt(i, 10)))
 			for id = 0; id < PN_number; id++ {
 				_, _ = doc_stim_PN.WriteString(" ")
@@ -2522,14 +2541,16 @@ func save_docs() {
 			_, _ = doc_stim_PN.WriteString("\n")
 		}
 		// ...
-		_, _ = doc_V_LN.Write([]byte(strconv.FormatInt(i, 10)))
-		for id = 0; id < LN_number; id++ {
-			_, _ = doc_V_LN.WriteString(" ")
-			_, _ = doc_V_LN.Write([]byte(strconv.FormatFloat(LN_V_list[i][id], 'f', 15, 64)))
+		if if_save_doc_v > 0 && if_save_doc_LNvs > 0 {
+			_, _ = doc_V_LN.Write([]byte(strconv.FormatInt(i, 10)))
+			for id = 0; id < LN_number; id++ {
+				_, _ = doc_V_LN.WriteString(" ")
+				_, _ = doc_V_LN.Write([]byte(strconv.FormatFloat(LN_V_list[i][id], 'f', 15, 64)))
+			}
+			_, _ = doc_V_LN.WriteString("\n")
 		}
-		_, _ = doc_V_LN.WriteString("\n")
 		// ...
-		if if_save_doc_stim > 0 {
+		if if_save_doc_stim > 0 && if_save_doc_LNvs > 0 {
 			_, _ = doc_stim_LN.Write([]byte(strconv.FormatInt(i, 10)))
 			for id = 0; id < LN_number; id++ {
 				_, _ = doc_stim_LN.WriteString(" ")
@@ -2577,11 +2598,21 @@ func save_docs() {
 	}
 	// ...
 	if if_save_doc_stim > 0 {
-		doc_stim_PN.Close()
-		doc_stim_LN.Close()
+		if if_save_doc_PNvs > 0 {
+			doc_stim_PN.Close()
+		}
+		if if_save_doc_LNvs > 0 {
+			doc_stim_LN.Close()
+		}
 	}
-	doc_V_PN.Close()
-	doc_V_LN.Close()
+	if if_save_doc_v > 0 {
+		if if_save_doc_PNvs > 0 {
+			doc_V_PN.Close()
+		}
+		if if_save_doc_LNvs > 0 {
+			doc_V_LN.Close()
+		}
+	}
 	if if_save_doc_sync > 0 {
 		doc_slow_PN.Close()
 		doc_GABA_PN.Close()
@@ -2710,8 +2741,6 @@ func disp_para() {
 	// ...
 	fmt.Println("use_exist_config ", use_exist_config)
 	fmt.Println("plot_file_dir ", plot_file_dir)
-	fmt.Println("save_file_dir ", save_file_dir)
-	fmt.Println("if_random_stim ", if_random_stim)
 	fmt.Println("if_init_rt_plots ", if_init_rt_plots)
 	fmt.Println("if_realtime_plot ", if_realtime_plot)
 	fmt.Println("if_PN_plot ", if_PN_plot)
@@ -2722,8 +2751,15 @@ func disp_para() {
 	fmt.Println("if_vFluct_plot ", if_vFluct_plot)
 	fmt.Println("if_stimFluct_plot ", if_stimFluct_plot)
 	fmt.Println("if_synaFluct_plot ", if_synaFluct_plot)
+	fmt.Println()
+	// ...
+	fmt.Println("if_random_stim ", if_random_stim)
+	fmt.Println("save_file_dir ", save_file_dir)
+	fmt.Println("if_save_doc_v", if_save_doc_v)
 	fmt.Println("if_save_doc_stim", if_save_doc_stim)
 	fmt.Println("if_save_doc_sync", if_save_doc_sync)
+	fmt.Println("if_save_doc_PNvs", if_save_doc_PNvs)
+	fmt.Println("if_save_doc_LNvs", if_save_doc_LNvs)
 	fmt.Println()
 }
 
