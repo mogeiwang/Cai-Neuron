@@ -180,6 +180,9 @@ package main
 // a) more doc saving controls
 // C 2 update:
 // a) upgrade to  830 PNs, 300 LNs
+// C 2.0.1 update:
+// a) rename var `time_begin` to `early_begin`
+// b) rename var `time_end` to `time_len`
 
 import (
 	"encoding/csv"
@@ -214,9 +217,9 @@ const (
 	freq_scoping         = "stimulated" // rising, stimulated, decay  # noStim has been removed
 	// ...
 	ms_per_second int64 = 1000                         // 1000 ms = 1 S
-	time_begin    int64 = 0 * ms_per_second            // length of transition process before 0.
-	early_end     int64 = 5 * ms_per_second            // the early end length. stop before the 1st para in time_end
-	time_end      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always
+	early_begin   int64 = 0 * ms_per_second            // length of transition process before 0 (data generated in this period are not saved!)
+	early_end     int64 = 5 * ms_per_second            // the early end length. stop before the 1st para in time_len
+	time_len      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always (data generated in [0,time_len] are saved)
 	PN_number     int64 = 830 * neuron_num_coefs
 	LN_number     int64 = 300 * neuron_num_coefs
 	stim_PN_num   int64 = 300 * neuron_num_coefs // how many PNs will receive stimulus
@@ -233,7 +236,7 @@ const (
 	save_file_dir    string  = "./"                        // "/mnt/tmpDisk/" // file_dir
 	fading_rate      float64 = 0.99800                     // exp(-0.01/5)=0.998
 	click_per_ms     int64   = 100                         // time steps (click/iteration) per ms
-	click_num_total  int64   = click_per_ms * time_end     // time steps (clicks) in total
+	click_num_total  int64   = click_per_ms * time_len     // time steps (clicks) in total
 	time_stepLen     float64 = 1.0 / float64(click_per_ms) // each time step 0.01ms (corresponding to click_per_ms)
 	// ...
 	const_scale_0   float64 = 0
@@ -585,15 +588,15 @@ var (
 	LN_reactor     [LN_number][2]LNtype             // LNs' last 2 states&currents structs
 	PN_spike_freq  [PN_number]float64               // how many spike for that PN per second
 	LN_spike_freq  [LN_number]float64               // how many spike for that LN per second
-	PN_V_list      [time_end + 1][PN_number]float64 // PNs' all historical V list
-	LN_V_list      [time_end + 1][LN_number]float64 // LNs' all historical V list
-	PN_stim_list   [time_end + 1][PN_number]float64 // PNs' all historical stim list
-	LN_stim_list   [time_end + 1][LN_number]float64 // LNs' all historical stim list
-	PN_slow_list   [time_end + 1][PN_number]float64 // PNs' all historical feedin slow currents
-	PN_GABA_list   [time_end + 1][PN_number]float64 // PNs' all historical feedin GABA currents
-	LN_GABA_list   [time_end + 1][LN_number]float64 // LNs' all historical feedin GABA currents
-	PN_nACH_list   [time_end + 1][PN_number]float64 // PNs' all historical feedin nACH currents
-	LN_nACH_list   [time_end + 1][LN_number]float64 // LNs' all historical feedin nACH currents
+	PN_V_list      [time_len + 1][PN_number]float64 // PNs' all historical V list
+	LN_V_list      [time_len + 1][LN_number]float64 // LNs' all historical V list
+	PN_stim_list   [time_len + 1][PN_number]float64 // PNs' all historical stim list
+	LN_stim_list   [time_len + 1][LN_number]float64 // LNs' all historical stim list
+	PN_slow_list   [time_len + 1][PN_number]float64 // PNs' all historical feedin slow currents
+	PN_GABA_list   [time_len + 1][PN_number]float64 // PNs' all historical feedin GABA currents
+	LN_GABA_list   [time_len + 1][LN_number]float64 // LNs' all historical feedin GABA currents
+	PN_nACH_list   [time_len + 1][PN_number]float64 // PNs' all historical feedin nACH currents
+	LN_nACH_list   [time_len + 1][LN_number]float64 // LNs' all historical feedin nACH currents
 	LN2PN_slow_mat [LN_number][PN_number]float64    // coupling matrix
 	LN2PN_GABA_mat [LN_number][PN_number]float64    // coupling matrix
 	LN2LN_GABA_mat [LN_number][LN_number]float64    // coupling matrix
@@ -1101,7 +1104,7 @@ func save_matrix() {
 }
 
 func forward_states_PN(id int64) {
-	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_end)
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_len)
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= PN_number {
 		return
@@ -1120,7 +1123,7 @@ func forward_states_PN(id int64) {
 		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
 			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
 		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
-			tt := math.Min(float64(stim_offset), float64(time_end))
+			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
@@ -1133,7 +1136,7 @@ func forward_states_PN(id int64) {
 }
 
 func forward_states_LN(id int64) {
-	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_end)
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_len)
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= LN_number {
 		return
@@ -1155,7 +1158,7 @@ func forward_states_LN(id int64) {
 		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
 			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
 		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
-			tt := math.Min(float64(stim_offset), float64(time_end))
+			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
@@ -1213,7 +1216,7 @@ func radiate_currents_LN(id int64) {
 
 func get_stim_PN(id int64) {
 	var inputRate, ret float64 = 0, fading_rate * PN_reactor[id][0].stim
-	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_end)
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_len)
 	var i int64 = 0
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= PN_number {
@@ -1262,7 +1265,7 @@ func get_stim_PN(id int64) {
 
 func get_stim_LN(id int64) {
 	var inputRate, ret float64 = 0, fading_rate * LN_reactor[id][0].stim
-	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_end)
+	var clock float64 = float64(int64(math.Floor(CLOCK)) % time_len)
 	var i int64 = 0
 	defer Exit(Enter("$FN(%v)", id))
 	if id < 0 || id >= LN_number {
@@ -2522,7 +2525,7 @@ func save_docs() {
 		check_err(err)
 	}
 	// ...
-	for i = 0; i <= time_end; i++ {
+	for i = 0; i <= time_len; i++ {
 		if if_save_doc_v > 0 && if_save_doc_PNvs > 0 {
 			_, _ = doc_V_PN.Write([]byte(strconv.FormatInt(i, 10))) // current time (ms)
 			for id = 0; id < PN_number; id++ {
@@ -2721,8 +2724,9 @@ func disp_para() {
 	fmt.Println("ORN_input_strength_LN ", ORN_input_strength_LN)
 	fmt.Println()
 	// ...
-	fmt.Println("time_begin ", time_begin/ms_per_second)
-	fmt.Println("time_end ", time_end/ms_per_second)
+	fmt.Println("early_begin ", early_begin/ms_per_second)
+	fmt.Println("early_end ", early_end/ms_per_second)
+	fmt.Println("time_len ", time_len/ms_per_second)
 	fmt.Println("click_per_ms ", click_per_ms)
 	fmt.Println("V_rest_PN ", V_rest_PN)
 	fmt.Println("V_rest_LN ", V_rest_LN)
@@ -2897,8 +2901,8 @@ func main() {
 	//...
 	fmt.Println("\nExec...")
 	fmt.Print("--- trans") // transition process...
-	CLOCK = -1.0 * float64(time_begin)
-	for tmpClick = 1; tmpClick <= click_per_ms*time_begin; tmpClick++ {
+	CLOCK = -1.0 * float64(early_begin)
+	for tmpClick = 1; tmpClick <= click_per_ms*early_begin; tmpClick++ {
 		if (tmpClick-1)%10000 == 9999 { // 0.1s
 			yaml_obj = decode_yaml(yaml_obj) // reread in the configuration parameters
 			proc_para(yaml_obj)
