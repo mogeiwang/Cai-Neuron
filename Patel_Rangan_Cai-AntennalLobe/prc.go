@@ -183,14 +183,13 @@ package main
 // C 2.0.1 update:
 // a) rename var `time_begin` to `early_begin`
 // b) rename var `time_end` to `time_len`
+// C 2.1 update:
+// a) fix freq counting bug (issue No 3)
+// b) change some default plot if_ vars
 
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/deckarep/golang-set"
-	"github.com/sabhiram/go-tracey"
-	"github.com/sbinet/go-gnuplot"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -199,10 +198,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/deckarep/golang-set"
+	"github.com/sabhiram/go-tracey"
+	"github.com/sbinet/go-gnuplot"
+	"gopkg.in/yaml.v2"
 )
 
 const (
-	neuron_num_coefs     = 1 // 1: 90-30-30-10;;; 0.1; 0.5; 1; 5; 10; ...
+	neuron_num_coefs     = 1 // 1: 830-300-300-100;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix     = 0 // readin matrix, or randomly set?
 	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
 	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default !!!
@@ -278,9 +282,9 @@ var (
 	if_stimRaster_plot  int64 = 1 // >0 set to plot, <0 set to pause.
 	if_vRaster_plot     int64 = 1 // >0 set to plot, <0 set to pause.
 	if_synaRaster_plot  int64 = 1 // >0 set to plot, <0 set to pause.
-	if_vFluct_plot      int64 = 1 // >0 set to plot, <0 set to pause. voltages of PNs and LNs
-	if_stimFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. stim-In...
-	if_synaFluct_plot   int64 = 1 // >0 set to plot, <0 set to pause. synapse currents
+	if_vFluct_plot      int64 = 0 // >0 set to plot, <0 set to pause. voltages of PNs and LNs
+	if_stimFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. stim-In...
+	if_synaFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
 	BG_input_rate         float64 = 3.50000 // 3.4711...
 	ORN_input_rate        float64 = 0.03500 // 0.0357
@@ -1121,14 +1125,20 @@ func forward_states_PN(id int64) {
 	if PN_reactor[id][0].V <= V_threshold_PN && PN_reactor[id][1].V > V_threshold_PN {
 		PN_reactor[id][1].lastSpike = CLOCK
 		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
-			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
+			tt := math.Min(float64(stim_onset+stim_rise), float64(time_len))
+			if tt > (stim_onset) {
+				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset) // plus 1 in the form freq in S
+			}
 		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
 			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
 		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
-			PN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+			tt := math.Min(float64(stim_offset+stim_decay), float64(time_len))
+			if tt > (stim_offset) {
+				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_offset) // plus 1 in the form freq in S
+			}
 		}
 	} else {
 		PN_reactor[id][1].lastSpike = PN_reactor[id][0].lastSpike
@@ -1156,14 +1166,20 @@ func forward_states_LN(id int64) {
 	if LN_reactor[id][0].V <= V_threshold_LN && LN_reactor[id][1].V > V_threshold_LN { // is this set properly?
 		LN_reactor[id][1].lastSpike = CLOCK
 		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
-			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_rise) // plus 1 in the form freq in S
+			tt := math.Min(float64(stim_onset+stim_rise), float64(time_len))
+			if tt > (stim_onset) {
+				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset) // plus 1 in the form freq in S
+			}
 		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
 			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
 		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
-			LN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+			tt := math.Min(float64(stim_offset+stim_decay), float64(time_len))
+			if tt > (stim_offset) {
+				LN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+			}
 		}
 	} else { // reveised after [try]
 		LN_reactor[id][1].lastSpike = LN_reactor[id][0].lastSpike
@@ -2944,7 +2960,6 @@ func main() {
 	}
 	disp_spike_freq() // disp_spike_freq() should be in ahead of disp_presync_num()!!!
 	save_docs()
-	//...
 	fmt.Println("\nDone...")
 	fmt.Println(time.Unix(time.Now().Unix(), 0).String())
 }
