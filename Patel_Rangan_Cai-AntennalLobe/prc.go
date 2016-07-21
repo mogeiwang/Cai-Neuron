@@ -186,6 +186,8 @@ package main
 // C 2.1 update:
 // a) fix freq counting bug (issue No 3)
 // b) change some default plot if_ vars
+// C 2.1.1 update:
+// a) change the stimulated PNs and LNs number to 40% of the total number
 
 import (
 	"encoding/csv"
@@ -198,7 +200,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
+	// ...
 	"github.com/deckarep/golang-set"
 	"github.com/sabhiram/go-tracey"
 	"github.com/sbinet/go-gnuplot"
@@ -222,12 +224,12 @@ const (
 	// ...
 	ms_per_second int64 = 1000                         // 1000 ms = 1 S
 	early_begin   int64 = 0 * ms_per_second            // length of transition process before 0 (data generated in this period are not saved!)
-	early_end     int64 = 5 * ms_per_second            // the early end length. stop before the 1st para in time_len
+	early_end     int64 = 0 * ms_per_second            // the early end length. stop before the 1st para in time_len
 	time_len      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always (data generated in [0,time_len] are saved)
 	PN_number     int64 = 830 * neuron_num_coefs
 	LN_number     int64 = 300 * neuron_num_coefs
-	stim_PN_num   int64 = 300 * neuron_num_coefs // how many PNs will receive stimulus
-	stim_LN_num   int64 = 100 * neuron_num_coefs
+	stim_PN_num   int64 = 332 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_LN_num   int64 = 120 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
 	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment !!! in ms
