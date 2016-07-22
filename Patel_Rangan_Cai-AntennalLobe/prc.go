@@ -228,7 +228,7 @@ const (
 	time_len      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always (data generated in [0,time_len] are saved)
 	PN_number     int64 = 830 * neuron_num_coefs
 	LN_number     int64 = 300 * neuron_num_coefs
-	stim_PN_num   int64 = 332 * neuron_num_coefs // how many PNs will receive stimulus
+	stim_PN_num   int64 = 330 * neuron_num_coefs // how many PNs will receive stimulus
 	stim_LN_num   int64 = 120 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
