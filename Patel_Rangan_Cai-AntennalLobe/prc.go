@@ -188,6 +188,10 @@ package main
 // b) change some default plot if_ vars
 // C 2.1.1 update:
 // a) change the stimulated PNs and LNs number to 40% of the total number
+// b) save doc_V_LN by default~
+// C 2.2 update: parameter changed to simulate bandpower vs time curve!!!
+// a) use Patel implemention's (program's) background/ORN input rates now
+// b) use Patel implemention's r1,r2,..,r4 for slow-GABA the paper values
 
 import (
 	"encoding/csv"
@@ -208,7 +212,7 @@ import (
 )
 
 const (
-	neuron_num_coefs     = 1 // 1: 830-300-300-100;;; 0.1; 0.5; 1; 5; 10; ...
+	neuron_num_coefs     = 1 // 1: 830-300-330-120;;; 0.1; 0.5; 1; 5; 10; ...
 	if_readin_matrix     = 0 // readin matrix, or randomly set?
 	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
 	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default !!!
@@ -217,7 +221,7 @@ const (
 	if_save_doc_stim     = 0
 	if_save_doc_sync     = 0
 	if_save_doc_PNvs     = 1 // save volt and stim of PNs?
-	if_save_doc_LNvs     = 0
+	if_save_doc_LNvs     = 1
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
 	freq_scoping         = "stimulated" // rising, stimulated, decay  # noStim has been removed
@@ -225,14 +229,14 @@ const (
 	ms_per_second int64 = 1000                         // 1000 ms = 1 S
 	early_begin   int64 = 0 * ms_per_second            // length of transition process before 0 (data generated in this period are not saved!)
 	early_end     int64 = 0 * ms_per_second            // the early end length. stop before the 1st para in time_len
-	time_len      int64 = 10*ms_per_second - early_end // run how many ms really!!! count from 0, always (data generated in [0,time_len] are saved)
+	time_len      int64 = 10*ms_per_second - early_end // run how many ms really! always count from 0 (data in [0,time_len] are saved)
 	PN_number     int64 = 830 * neuron_num_coefs
 	LN_number     int64 = 300 * neuron_num_coefs
 	stim_PN_num   int64 = 330 * neuron_num_coefs // how many PNs will receive stimulus
 	stim_LN_num   int64 = 120 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
-	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment !!! in ms
+	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment ! in ms
 	stim_offset float64 = 3.5 * float64(ms_per_second) // 4.0 withdraw stimulus at this moment (time in ms)
 	stim_rise   float64 = 0.4 * float64(ms_per_second) // 0.5 rise time of stimulus input onset (1.5-2)
 	stim_decay  float64 = 1.0 * float64(ms_per_second) // 2.0 decay time (Inf) of stimulus input offset (4.0-6)
@@ -288,8 +292,8 @@ var (
 	if_stimFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
-	BG_input_rate         float64 = 3.50000 // 3.4711...
-	ORN_input_rate        float64 = 0.03500 // 0.0357
+	BG_input_rate         float64 = 3.47110 // !!! using program val // 3.50000(paper)
+	ORN_input_rate        float64 = 0.03570 // !!! using program val // 0.03500(paper)
 	BG_input_strength_PN  float64 = 0.06540
 	BG_input_strength_LN  float64 = 0.00010
 	ORN_input_strength_PN float64 = 0.01743
@@ -342,10 +346,10 @@ const (
 )
 
 var (
-	g_GABA_PN float64 = 0.36  // LN --[GABA]-> PN
+	g_GABA_PN float64 = 0.360 // LN --[GABA]-> PN
 	g_nACH_PN float64 = 0.009 // PN --[nACH]-> PN
-	g_slow_PN float64 = 0.36  // LN --[slow]-> PN
-	g_GABA_LN float64 = 0.3   // LN --[GABA]-> LN
+	g_slow_PN float64 = 0.360 // LN --[slow]-> PN
+	g_GABA_LN float64 = 0.300 // LN --[GABA]-> LN
 	g_nACH_LN float64 = 0.045 // PN --[nACH]-> LN
 	// ...
 	E_GABA_PN float64 = 70.0
@@ -559,7 +563,7 @@ func (x LNtype) dfdt_O_GABA() float64 {
 }
 
 func (x LNtype) dfdt_G_slow() float64 {
-	var ret, r3, r4 float64 = 0, 0.1000, 0.0330 // !!! r4: 0.033(paper); 0.06(program)
+	var ret, r3, r4 float64 = 0, 0.1000, 0.0600 // !!! r4: 0.033(paper); 0.06(program)
 	defer Exit(Enter("$FN()"))
 	ret = r3*x.R_slow - r4*x.G_slow
 	return ret
@@ -567,7 +571,7 @@ func (x LNtype) dfdt_G_slow() float64 {
 
 func (x LNtype) dfdt_R_slow() float64 {
 	var ret, h1, h2, t1, t2 float64
-	var r1, r2 float64 = 0.5000, 0.0013 // !!! r1, r2: 0.5, 0.0013(paper); 1.0, 0.0025(pragram)
+	var r1, r2 float64 = 1.0000, 0.0025 // !!! r1, r2: 0.5, 0.0013(paper); 1.0, 0.0025(pragram)
 	defer Exit(Enter("$FN()"))
 	t1 = x.lastSpike + 0.3 - CLOCK
 	t2 = CLOCK - x.lastSpike
