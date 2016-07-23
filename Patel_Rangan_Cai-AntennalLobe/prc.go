@@ -292,8 +292,8 @@ var (
 	if_stimFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
-	BG_input_rate         float64 = 3.47110 // !!! using program val // 3.50000(paper)
-	ORN_input_rate        float64 = 0.03570 // !!! using program val // 0.03500(paper)
+	BG_input_rate         float64 = 3.47107 // !!! using program val // 3.50000(paper)
+	ORN_input_rate        float64 = 0.03572 // !!! using program val // 0.03500(paper)
 	BG_input_strength_PN  float64 = 0.06540
 	BG_input_strength_LN  float64 = 0.00010
 	ORN_input_strength_PN float64 = 0.01743
