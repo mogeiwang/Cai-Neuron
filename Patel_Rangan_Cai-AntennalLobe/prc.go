@@ -192,6 +192,9 @@ package main
 // C 2.2 update: parameter changed to simulate bandpower vs time curve!!!
 // a) use Patel implemention's (program's) background/ORN input rates now
 // b) use Patel implemention's r1,r2,..,r4 for slow-GABA the paper values
+// C 2.3 update:
+// a) no decay limition from now on! removed the var `stim_decay`!
+// a+ introduce a fade pDecay for counting spike rate and input steady input
 
 import (
 	"encoding/csv"
@@ -239,7 +242,7 @@ const (
 	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment ! in ms
 	stim_offset float64 = 3.5 * float64(ms_per_second) // 4.0 withdraw stimulus at this moment (time in ms)
 	stim_rise   float64 = 0.4 * float64(ms_per_second) // 0.5 rise time of stimulus input onset (1.5-2)
-	stim_decay  float64 = 1.0 * float64(ms_per_second) // 2.0 decay time (Inf) of stimulus input offset (4.0-6)
+	stim_pDecay float64 = 3.0 * float64(ms_per_second) // 2.0 fade decay time (the real one is Inf) after input offset (4.0-6)
 	// ...
 	use_exist_config bool    = true                        // read the config file [or rewrite it]?
 	plot_file_dir    string  = "/mnt/tmpDisk/"             // file_dir
@@ -1140,8 +1143,8 @@ func forward_states_PN(id int64) {
 			if tt > (stim_onset + stim_rise) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
-			tt := math.Min(float64(stim_offset+stim_decay), float64(time_len))
+		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
+			tt := math.Min(float64(stim_offset+stim_pDecay), float64(time_len))
 			if tt > (stim_offset) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_offset) // plus 1 in the form freq in S
 			}
@@ -1181,10 +1184,10 @@ func forward_states_LN(id int64) {
 			if tt > (stim_onset + stim_rise) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_decay) {
-			tt := math.Min(float64(stim_offset+stim_decay), float64(time_len))
+		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
+			tt := math.Min(float64(stim_offset+stim_pDecay), float64(time_len))
 			if tt > (stim_offset) {
-				LN_spike_freq[id] += float64(ms_per_second) / float64(stim_decay) // plus 1 in the form freq in S
+				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_offset) // plus 1 in the form freq in S
 			}
 		}
 	} else { // reveised after [try]
@@ -1255,11 +1258,10 @@ func get_stim_PN(id int64) {
 		//inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		inputRate = ORN_input_rate
-	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
+	} else if clock >= stim_offset { // decay stimulus
 		inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
-		//inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
-	} else if clock >= (stim_offset + stim_decay) { // after decay
-		inputRate = 0
+		//inputRate = ((stim_offset + stim_pDecay - clock) / stim_pDecay) * ORN_input_rate
+		//elif ...: inputRate = 0
 	}
 	if odor_PN_set.Contains(id) {
 		for i = 0; i < ORN_number; i++ {
@@ -1278,9 +1280,9 @@ func get_stim_PN(id int64) {
 		PN_reactor[id][1].stim = PN_stim_baseline + ((clock-stim_onset)/stim_rise)*(PN_stim_plusORNs-PN_stim_baseline)
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		PN_reactor[id][1].stim = PN_stim_plusORNs
-	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
-		PN_reactor[id][1].stim = PN_stim_baseline + ((stim_offset+stim_decay-clock)/stim_decay)*(PN_stim_plusORNs-PN_stim_baseline)
-	} else if clock >= (stim_offset + stim_decay) { // after decay
+	} else if clock >= stim_offset && clock < (stim_offset+stim_pDecay) { // decay stimulus
+		PN_reactor[id][1].stim = PN_stim_baseline + ((stim_offset+stim_pDecay-clock)/stim_pDecay)*(PN_stim_plusORNs-PN_stim_baseline)
+	} else if clock >= (stim_offset + stim_pDecay) { // after decay
 		PN_reactor[id][1].stim = PN_stim_baseline
 	}
 }
@@ -1304,11 +1306,10 @@ func get_stim_LN(id int64) {
 		//inputRate = ((clock - stim_onset) / stim_rise) * ORN_input_rate
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		inputRate = ORN_input_rate
-	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
+	} else if clock >= stim_offset { // decay stimulus
 		inputRate = math.Exp(-math.Sqrt(clock-stim_offset)/math.Sqrt(1000)) * ORN_input_rate
-		//inputRate = ((stim_offset + stim_decay - clock) / stim_decay) * ORN_input_rate
-	} else if clock >= (stim_offset + stim_decay) { // after decay
-		inputRate = 0
+		//inputRate = ((stim_offset + stim_pDecay - clock) / stim_pDecay) * ORN_input_rate
+		//elif ...: inputRate = 0
 	}
 	if odor_LN_set.Contains(id) {
 		for i = 1; i <= ORN_number; i++ {
@@ -1327,9 +1328,9 @@ func get_stim_LN(id int64) {
 		LN_reactor[id][1].stim = LN_stim_baseline + ((clock-stim_onset)/stim_rise)*(LN_stim_plusORNs-LN_stim_baseline)
 	} else if clock >= (stim_onset+stim_rise) && clock < stim_offset { // normal stimulus
 		LN_reactor[id][1].stim = LN_stim_plusORNs
-	} else if clock >= stim_offset && clock < (stim_offset+stim_decay) { // decay stimulus
-		LN_reactor[id][1].stim = LN_stim_baseline + ((stim_offset+stim_decay-clock)/stim_decay)*(LN_stim_plusORNs-LN_stim_baseline)
-	} else if clock >= (stim_offset + stim_decay) { // after decay
+	} else if clock >= stim_offset && clock < (stim_offset+stim_pDecay) { // decay stimulus
+		LN_reactor[id][1].stim = LN_stim_baseline + ((stim_offset+stim_pDecay-clock)/stim_pDecay)*(LN_stim_plusORNs-LN_stim_baseline)
+	} else if clock >= (stim_offset + stim_pDecay) { // after decay
 		LN_reactor[id][1].stim = LN_stim_baseline
 	}
 }
@@ -2734,7 +2735,7 @@ func disp_para() {
 	fmt.Println("stim_onset ", stim_onset/float64(ms_per_second))
 	fmt.Println("stim_rise ", stim_rise/float64(ms_per_second))
 	fmt.Println("stim_offset ", stim_offset/float64(ms_per_second))
-	fmt.Println("stim_decay ", stim_decay/float64(ms_per_second))
+	fmt.Println("stim_pDecay ", stim_pDecay/float64(ms_per_second))
 	fmt.Println("odor_slip ", odor_slip)
 	fmt.Println("odor_PN_set ", odor_PN_set)
 	fmt.Println("odor_LN_set ", odor_LN_set)
