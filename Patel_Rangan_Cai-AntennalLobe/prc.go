@@ -242,12 +242,12 @@ const (
 	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment ! in ms
 	stim_offset float64 = 3.5 * float64(ms_per_second) // 4.0 withdraw stimulus at this moment (time in ms)
 	stim_rise   float64 = 0.4 * float64(ms_per_second) // 0.5 rise time of stimulus input onset (1.5-2)
-	stim_pDecay float64 = 3.0 * float64(ms_per_second) // 2.0 fade decay time (the real one is Inf) after input offset (4.0-6)
+	stim_pDecay float64 = 6.0 * float64(ms_per_second) // 2.0 fade decay time (the real one is Inf) after input offset (4.0-6)
 	// ...
 	use_exist_config bool    = true                        // read the config file [or rewrite it]?
 	plot_file_dir    string  = "/mnt/tmpDisk/"             // file_dir
 	save_file_dir    string  = "./"                        // "/mnt/tmpDisk/" // file_dir
-	fading_rate      float64 = 0.99800                     // exp(-0.01/5)=0.998
+	fading_rate      float64 = 0.99800                     // exp(-time_stepLen/5)=0.998;  5 is decay time scale of stimulus current.
 	click_per_ms     int64   = 100                         // time steps (click/iteration) per ms
 	click_num_total  int64   = click_per_ms * time_len     // time steps (clicks) in total
 	time_stepLen     float64 = 1.0 / float64(click_per_ms) // each time step 0.01ms (corresponding to click_per_ms)
