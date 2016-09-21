@@ -195,6 +195,9 @@ package main
 // C 2.3 update:
 // a) no decay limition from now on! removed the var `stim_decay`!
 // a+ introduce a fade pDecay for counting spike rate and input steady input
+// C 2.3.1 update:
+// a) set the default counting region to: rising
+// b) set the default counting region back to: stimulated: 2.3.1==2.3 now!!!
 
 import (
 	"encoding/csv"
@@ -227,7 +230,7 @@ const (
 	if_save_doc_LNvs     = 1
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
-	freq_scoping         = "stimulated" // rising, stimulated, decay  # noStim has been removed
+	sf_duration         = "stimulated" // spike freq of rising, stimulated, decay  # noStim has been removed
 	// ...
 	ms_per_second int64 = 1000                         // 1000 ms = 1 S
 	early_begin   int64 = 0 * ms_per_second            // length of transition process before 0 (data generated in this period are not saved!)
@@ -1133,17 +1136,17 @@ func forward_states_PN(id int64) {
 	// ...
 	if PN_reactor[id][0].V <= V_threshold_PN && PN_reactor[id][1].V > V_threshold_PN {
 		PN_reactor[id][1].lastSpike = CLOCK
-		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
+		if sf_duration == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
 			tt := math.Min(float64(stim_onset+stim_rise), float64(time_len))
 			if tt > (stim_onset) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
+		} else if sf_duration == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
 			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
+		} else if sf_duration == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
 			tt := math.Min(float64(stim_offset+stim_pDecay), float64(time_len))
 			if tt > (stim_offset) {
 				PN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_offset) // plus 1 in the form freq in S
@@ -1174,17 +1177,17 @@ func forward_states_LN(id int64) {
 	// ...
 	if LN_reactor[id][0].V <= V_threshold_LN && LN_reactor[id][1].V > V_threshold_LN { // is this set properly?
 		LN_reactor[id][1].lastSpike = CLOCK
-		if freq_scoping == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
+		if sf_duration == "rising" && clock >= stim_onset && clock < (stim_onset+stim_rise) {
 			tt := math.Min(float64(stim_onset+stim_rise), float64(time_len))
 			if tt > (stim_onset) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
+		} else if sf_duration == "stimulated" && clock >= (stim_onset+stim_rise) && clock < stim_offset {
 			tt := math.Min(float64(stim_offset), float64(time_len))
 			if tt > (stim_onset + stim_rise) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_onset-stim_rise) // plus 1 in the form freq in S
 			}
-		} else if freq_scoping == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
+		} else if sf_duration == "decay" && clock >= stim_offset && clock < (stim_offset+stim_pDecay) {
 			tt := math.Min(float64(stim_offset+stim_pDecay), float64(time_len))
 			if tt > (stim_offset) {
 				LN_spike_freq[id] += float64(ms_per_second) / float64(tt-stim_offset) // plus 1 in the form freq in S
@@ -2798,7 +2801,7 @@ func disp_spike_freq() {
 	LN_spike_freq_file, err = os.OpenFile(LN_spike_freq_filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0640)
 	check_err(err)
 	// ...
-	fmt.Println("\nSpiking rates (spikes per second) of each neuron <<", freq_scoping)
+	fmt.Println("\nSpiking rates (spikes per second) of each neuron <<", sf_duration)
 	for i = 0; i < PN_number; i++ {
 		fmt.Printf("\t\tPN_spike_freq[%03d] \t %.1f\n", i, PN_spike_freq[i])
 		_, _ = PN_spike_freq_file.Write([]byte(strconv.FormatInt(i, 10)))
