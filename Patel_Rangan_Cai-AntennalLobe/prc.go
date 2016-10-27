@@ -1,16 +1,25 @@
 package main
 
 // reproduction of Patel's work
-// awesome mw, Aug 20, 2015, init, NYU , AbuDhabi
+//
+// awesome mw, Aug 20, 2015, init, NYU, Abu Dhabi
 //           , Sep 29, 2015, Ver1, SJTU, Shanghai
 //           , Dec 01, 2015, Ver2, SJTU, Shanghai
 //           , Dec 20, 2015, Ver3, SJTU, Shanghai
+//
 // brilliant , Dec 23, 2015, init, SJTU, Shanghai
 //           , Dec 26, 2015, Ver1, SJTU, Shanghai
 //           , Dec 30, 2015, Ver2, SJTU, Shanghai
 //           , Jan 04, 2016, Ver3, SJTU, Shanghai
+//
 // charming  , May 21, 2016, init, SJTU, Shanghai
 //           , Jul 17, 2016, Ver1, SJTU, Shanghai
+//
+// delightful, Aug 30, 2016, init, NYU, Abu Dhabi
+//           , Oct 09, 2016, Ver1, SJTU, Shanghai
+//
+// ... ... ...
+//
 // A 1.0.1 update:
 // a) init_matrix has its own rand.Seed now
 // b) xN_V_list, xN_stim_list sampling rate reset to 1item per ms
@@ -96,6 +105,7 @@ package main
 // !) [re]check. for testing different run-time, different stim-time...
 //        mind the long trial time (20S) and temporal stim periods...
 // a) default matrix seed is the constant 0
+//
 // B 0.0 update:
 // a) use seperated LN-slow>PN and LN-GABA>PN synapse
 // b) print matrixes in the program startup
@@ -163,6 +173,7 @@ package main
 // a) change default neuron numbers, and do other minor fix.
 // B 4.0 update:
 // a) read adjacency list, in additional to the previous csv reading.
+//
 // C 0.1 update:
 // a) support inline comments in adjl files
 // b) do NOT init gnuplots by default
@@ -198,6 +209,24 @@ package main
 // C 2.3.1 update:
 // a) set the default counting region to: rising
 // b) set the default counting region back to: stimulated: 2.3.1==2.3 now!!!
+//
+// D 0.0.0 update:
+// a) stim_pDecay decays to the end of simulation (10S)
+// D 1.0.0 update:
+// a) refine coupling probablities
+// b) adjust background and ORNs inputs (rate, strength)
+// c) adjust ORNs stim neuron number
+// ^--- these refinements are very important!!!
+// d) introduce time_all_S to control the total run length (in Second)
+// D 1.0.1 update:
+// a) add var `rand_seed` to control the random seed of vars other than coupling matrixes
+// b) use `flag` pkg to process env vars
+// c) `rand_seed` and `matrix_seed` are Absed for simplicity
+// d) the usage() func has been removed
+// D 1.1 update:
+// a) fix the bug of `init_rand()` not called problem!!
+// b) remove `early_begin` things --- just run an extra 0.5 Second in advance
+// c) change initial states of neurons
 
 import (
 	"encoding/csv"
@@ -212,16 +241,17 @@ import (
 	"time"
 	// ...
 	"github.com/deckarep/golang-set"
+	"github.com/namsral/flag"
 	"github.com/sabhiram/go-tracey"
 	"github.com/sbinet/go-gnuplot"
 	"gopkg.in/yaml.v2"
 )
 
 const (
-	neuron_num_coefs     = 1 // 1: 830-300-330-120;;; 0.1; 0.5; 1; 5; 10; ...
-	if_readin_matrix     = 0 // readin matrix, or randomly set?
-	if_readin_csv_matrix = 0 // readin csv matrix, or adjacency list?
-	if_init_rt_plots     = 0 // >0 init gnuplot; <=0 do not init: default !!!
+	neuron_num_coefs     = 0.1 // 1: 830-300;;; 0.1; 0.5; 1; 5; 10; ...
+	if_readin_matrix     = 0   // readin matrix, or randomly set?
+	if_readin_csv_matrix = 0   // readin csv matrix, or adjacency list?
+	if_init_rt_plots     = 0   // >0 init gnuplot; <=0 do not init: default !!!
 	if_runtime_trace     = 0
 	if_save_doc_v        = 1
 	if_save_doc_stim     = 0
@@ -230,22 +260,22 @@ const (
 	if_save_doc_LNvs     = 1
 	plot_fluct_PN_id     = 0 // which PN fluction to plot?
 	plot_fluct_LN_id     = 0
-	sf_duration         = "stimulated" // spike freq of rising, stimulated, decay  # noStim has been removed
+	sf_duration          = "stimulated" // spike freq of rising, stimulated, decay  # noStim has been removed
 	// ...
-	ms_per_second int64 = 1000                         // 1000 ms = 1 S
-	early_begin   int64 = 0 * ms_per_second            // length of transition process before 0 (data generated in this period are not saved!)
-	early_end     int64 = 0 * ms_per_second            // the early end length. stop before the 1st para in time_len
-	time_len      int64 = 10*ms_per_second - early_end // run how many ms really! always count from 0 (data in [0,time_len] are saved)
+	ms_per_second int64 = 1000                                 // 1000 ms = 1 S
+	early_end     int64 = 0 * ms_per_second                    // the early end length. stop before the 1st para in time_len
+	time_all_S    int64 = 11                                   // run how many seconds in the simulation --- an extra second
+	time_len      int64 = time_all_S*ms_per_second - early_end // run how many ms really! always count from 0 (data in [0,time_len] are saved)
 	PN_number     int64 = 830 * neuron_num_coefs
 	LN_number     int64 = 300 * neuron_num_coefs
 	stim_PN_num   int64 = 330 * neuron_num_coefs // how many PNs will receive stimulus
 	stim_LN_num   int64 = 120 * neuron_num_coefs
 	// ...
 	ORN_number  int64   = 200
-	stim_onset  float64 = 1.0 * float64(ms_per_second) // 1.5 stimulus starts at this moment ! in ms
-	stim_offset float64 = 3.5 * float64(ms_per_second) // 4.0 withdraw stimulus at this moment (time in ms)
-	stim_rise   float64 = 0.4 * float64(ms_per_second) // 0.5 rise time of stimulus input onset (1.5-2)
-	stim_pDecay float64 = 6.0 * float64(ms_per_second) // 2.0 fade decay time (the real one is Inf) after input offset (4.0-6)
+	stim_onset  float64 = 1.5 * float64(ms_per_second)                             // stimulus starts at this moment ! in ms! an extra 0.5S in advance!!
+	stim_offset float64 = 4.0 * float64(ms_per_second)                             // withdraw stimulus at this moment (time in ms)
+	stim_rise   float64 = 0.4 * float64(ms_per_second)                             // rise time of stimulus input onset (1.0-1.4)
+	stim_pDecay float64 = float64(time_all_S)*float64(ms_per_second) - stim_offset // fade decay time (the real one is Inf) after input offset (3.5-end(10))
 	// ...
 	use_exist_config bool    = true                        // read the config file [or rewrite it]?
 	plot_file_dir    string  = "/mnt/tmpDisk/"             // file_dir
@@ -279,11 +309,11 @@ var (
 	if_PN2PN_nACHed int64 = 1 // if has PN-2-PN links ; >0: true; <0: false
 	if_PN2LN_nACHed int64 = 1 // if has PN-2-LN links
 	// ...
-	LN2PN_slow_prob float64 = 0.015 / neuron_num_coefs //  0.050
-	LN2PN_GABA_prob float64 = 0.015 / neuron_num_coefs //  0.050
-	LN2LN_GABA_prob float64 = 0.025 / neuron_num_coefs //  0.084
-	PN2PN_nACH_prob float64 = 0.010 / neuron_num_coefs //  0.036
-	PN2LN_nACH_prob float64 = 0.010 / neuron_num_coefs //  0.036
+	LN2PN_slow_prob float64 = 0.015 / neuron_num_coefs // 0.015
+	LN2PN_GABA_prob float64 = 0.015 / neuron_num_coefs // 0.015
+	LN2LN_GABA_prob float64 = 0.025 / neuron_num_coefs // 0.025
+	PN2PN_nACH_prob float64 = 0.010 / neuron_num_coefs // 0.010
+	PN2LN_nACH_prob float64 = 0.010 / neuron_num_coefs // 0.010
 	// if run, if plot...
 	if_running          int64 = 1 // >0 set to run , <=0 set to pause.
 	if_slowGABA_overlap int64 = 1 // LN2PN slow == GABA ??
@@ -298,8 +328,8 @@ var (
 	if_stimFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. stim-In...
 	if_synaFluct_plot   int64 = 0 // >0 set to plot, <0 set to pause. synapse currents
 	//   \--- above variables are set in config file.
-	BG_input_rate         float64 = 3.47107 // !!! using program val // 3.50000(paper)
-	ORN_input_rate        float64 = 0.03572 // !!! using program val // 0.03500(paper)
+	BG_input_rate         float64 = 3.50000 // !!! using paper val // 3.47107(codes)
+	ORN_input_rate        float64 = 0.03500 // !!! using prper val // 0.03572(codes)
 	BG_input_strength_PN  float64 = 0.06540
 	BG_input_strength_LN  float64 = 0.00010
 	ORN_input_strength_PN float64 = 0.01743
@@ -311,6 +341,7 @@ var (
 	PN_stim_plusORNs float64 = -1.79143
 	// more configurations:
 	matrix_seed int64 = 0 // rand.seed() in init_matrix()
+	rand_seed   int64 = 0
 	odor_slip   int64 = 0 // how many stimulated PNs are chosen from right (max IDs)
 	odor_PN_set mapset.Set
 	odor_LN_set mapset.Set
@@ -569,7 +600,7 @@ func (x LNtype) dfdt_O_GABA() float64 {
 }
 
 func (x LNtype) dfdt_G_slow() float64 {
-	var ret, r3, r4 float64 = 0, 0.1000, 0.0600 // !!! r4: 0.033(paper); 0.06(program)
+	var ret, r3, r4 float64 = 0, 0.1000, 0.0330 // !!! r4: 0.033(paper); 0.06(program)
 	defer Exit(Enter("$FN()"))
 	ret = r3*x.R_slow - r4*x.G_slow
 	return ret
@@ -577,7 +608,7 @@ func (x LNtype) dfdt_G_slow() float64 {
 
 func (x LNtype) dfdt_R_slow() float64 {
 	var ret, h1, h2, t1, t2 float64
-	var r1, r2 float64 = 1.0000, 0.0025 // !!! r1, r2: 0.5, 0.0013(paper); 1.0, 0.0025(pragram)
+	var r1, r2 float64 = 0.5000, 0.0013 // !!! r1, r2: 0.5, 0.0013(paper); 1.0, 0.0025(pragram)
 	defer Exit(Enter("$FN()"))
 	t1 = x.lastSpike + 0.3 - CLOCK
 	t2 = CLOCK - x.lastSpike
@@ -1538,7 +1569,11 @@ var (
 
 func init_rand() {
 	defer Exit(Enter("$FN()"))
-	rand.Seed(time.Now().Unix())
+	if rand_seed > 0 {
+		rand.Seed(rand_seed)
+	} else {
+		rand.Seed(time.Now().Unix())
+	}
 }
 
 func init_para() { // add more thing to write at initial?
@@ -2491,23 +2526,23 @@ func init_neuron() {
 	var id int64
 	defer Exit(Enter("$FN()"))
 	for id = 0; id < PN_number; id++ {
-		PN_reactor[id][0].V = V_rest_PN * rand.Float64()
-		PN_reactor[id][0].stim = -1.5 * rand.Float64()
-		PN_reactor[id][0].h_K = 1 * rand.Float64()
-		PN_reactor[id][0].h_Na = 1 * rand.Float64()
-		PN_reactor[id][0].h_A = 1 * rand.Float64()
-		PN_reactor[id][0].lastSpike = -10 * rand.Float64()
+		PN_reactor[id][0].V = V_rest_PN + 10*rand.Float64()
+		PN_reactor[id][0].stim = 0
+		PN_reactor[id][0].h_K = 1
+		PN_reactor[id][0].h_Na = 1
+		PN_reactor[id][0].h_A = 1
+		PN_reactor[id][0].lastSpike = -0.1 - 0.9*rand.Float64()
 		PN_V_list[0][id] = PN_reactor[id][0].V
 		PN_stim_list[0][id] = PN_reactor[id][0].stim
 	} // end for PN
 	for id = 0; id < LN_number; id++ {
-		LN_reactor[id][0].V = V_rest_LN * rand.Float64()
-		LN_reactor[id][0].stim = -0.05 * rand.Float64()
-		LN_reactor[id][0].h_K = 1 * rand.Float64()
-		LN_reactor[id][0].h_Ca = 1 * rand.Float64()
-		LN_reactor[id][0].h_B = 1 * rand.Float64()
-		LN_reactor[id][0].R_slow = 0.3 * rand.Float64()
-		LN_reactor[id][0].lastSpike = -10 * rand.Float64()
+		LN_reactor[id][0].V = V_rest_LN + 10*rand.Float64()
+		LN_reactor[id][0].stim = 0
+		LN_reactor[id][0].h_K = 1
+		LN_reactor[id][0].h_Ca = 1
+		LN_reactor[id][0].h_B = 1
+		LN_reactor[id][0].R_slow = 0
+		LN_reactor[id][0].lastSpike = -0.1 - 0.9*rand.Float64()
 		LN_V_list[0][id] = LN_reactor[id][0].V
 		LN_stim_list[0][id] = LN_reactor[id][0].stim
 	} // end for LN
@@ -2651,13 +2686,6 @@ func save_docs() {
 	}
 }
 
-func usage() {
-	defer Exit(Enter("$FN()"))
-	fmt.Println("Usage: awesome [odor_slip] [matrix_seed]")
-	fmt.Println("    where odor_slip and matrix_seed are integers.")
-	fmt.Println()
-}
-
 func scale_synapse_currents() {
 	defer Exit(Enter("$FN()"))
 	g_GABA_PN *= scale_GABA_PN // LN --[GABA]-> PN --- use this one
@@ -2730,6 +2758,7 @@ func remove_coupling_matrix() {
 func disp_para() {
 	defer Exit(Enter("$FN()"))
 	fmt.Println("matrix_seed ", matrix_seed)
+	fmt.Println("rand_seed ", rand_seed)
 	fmt.Println("PN_number ", PN_number)
 	fmt.Println("LN_number ", LN_number)
 	fmt.Println("stim_PN_num ", stim_PN_num)
@@ -2750,7 +2779,6 @@ func disp_para() {
 	fmt.Println("ORN_input_strength_LN ", ORN_input_strength_LN)
 	fmt.Println()
 	// ...
-	fmt.Println("early_begin ", early_begin/ms_per_second)
 	fmt.Println("early_end ", early_end/ms_per_second)
 	fmt.Println("time_len ", time_len/ms_per_second)
 	fmt.Println("click_per_ms ", click_per_ms)
@@ -2839,55 +2867,38 @@ func init_odor() {
 	}
 }
 
+func absI64(x int64) int64 {
+	if x < 0 {
+		return -x
+	} else {
+		return x
+	}
+}
+
 func proc_args() {
 	defer Exit(Enter("$FN()"))
-	arg_num := int64(len(os.Args))
-	if arg_num > 3 {
-		usage()
-		return
-	} else if arg_num == 3 { // reading user's odor_slip and matrix_seed
-		t_int1, err1 := strconv.Atoi(os.Args[1])
-		t_int2, err2 := strconv.Atoi(os.Args[2])
-		if err1 != nil || err2 != nil { // error proc
-			usage()
-			check_err(err)
-			return
-		}
-		// ...
-		if t_int1 < 0 || int64(t_int1) >= PN_number {
-			odor_slip = odor_slip % PN_number
-			fmt.Println("WARNing: odor_slip is reset to ", odor_slip)
-		} else {
-			odor_slip = int64(t_int1)
-		}
-		matrix_seed = int64(t_int2)
-		fmt.Println("using usr's odor_slip and matrix_seed")
-	} else if arg_num == 2 { // reading user's odor_slip
-		t_int, err := strconv.Atoi(os.Args[1])
-		if err != nil { // error proc
-			usage()
-			check_err(err)
-			return
-		}
-		// ...
-		if t_int < 0 || int64(t_int) >= PN_number {
-			odor_slip = odor_slip % PN_number
-			fmt.Println("WARNing: odor_slip is reset to ", odor_slip)
-		} else {
-			odor_slip = int64(t_int)
-		}
-		fmt.Println("using usr's odor_slip and default(0) matrix_seed")
-	} else if arg_num == 1 {
-		fmt.Println("using default(0) odor_slip and matrix_seed")
+	// ...
+	flag.Int64Var(&odor_slip, "o", 0, "slip x PNs representing an odor")
+	flag.Int64Var(&matrix_seed, "m", 0, "matrix random seed")
+	flag.Int64Var(&rand_seed, "r", 0, "seed of the other random vars")
+	flag.Parse()
+	// ...
+	if odor_slip < 0 || odor_slip >= PN_number {
+		odor_slip = absI64(odor_slip) % PN_number
+		fmt.Println("WARNing: odor_slip is reset to ", odor_slip)
 	}
+	rand_seed = absI64(rand_seed)
+	matrix_seed = absI64(matrix_seed)
 	// ...
 	fmt.Println(odor_slip, " <= stim_PN_ID < ", stim_PN_num+odor_slip)
+	fmt.Println("\t if (stim_PN_num+odor_slip)>PN_number then the slip stops at PN_number")
 	fmt.Println("initial matrix with random seed: ", matrix_seed)
+	fmt.Println("initial the other random vars with seed: ", rand_seed)
 	fmt.Println()
 }
 
 func main() {
-	var click, tmpClick int64
+	var click int64
 	var yaml_obj map[interface{}]interface{}
 	var flagCpuprofile string
 	var cpuProf_file *os.File
@@ -2907,6 +2918,7 @@ func main() {
 	init_para()
 	yaml_obj = decode_yaml(yaml_obj)
 	proc_para(yaml_obj)
+	//...
 	init_matrix(yaml_obj)
 	disp_matrix()
 	save_matrix()
@@ -2926,18 +2938,6 @@ func main() {
 	}
 	//...
 	fmt.Println("\nExec...")
-	fmt.Print("--- trans") // transition process...
-	CLOCK = -1.0 * float64(early_begin)
-	for tmpClick = 1; tmpClick <= click_per_ms*early_begin; tmpClick++ {
-		if (tmpClick-1)%10000 == 9999 { // 0.1s
-			yaml_obj = decode_yaml(yaml_obj) // reread in the configuration parameters
-			proc_para(yaml_obj)
-			fmt.Print("  ", float64(tmpClick)/100000.0)
-		}
-		//...
-		CLOCK = CLOCK + time_stepLen
-		take_iteration(tmpClick) // move a step forward
-	}
 	//...
 	fmt.Print("\n--- main!")
 	CLOCK = 0
